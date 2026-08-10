@@ -37,14 +37,6 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
     widget.queueNotifier.addListener(_onQueueChanged);
     widget.playerService.addListener(_onVideoChanged);
     _syncIndex();
-
-    widget.playerService.player.processingStateStream.listen((state) {
-      if (!mounted) return;
-      if (state == ProcessingState.completed &&
-          widget.playerService.repeatMode == RepeatMode.none) {
-        _playNext();
-      }
-    });
   }
 
   @override
@@ -78,13 +70,13 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
   void _playNext() {
     final queue = widget.queueNotifier.value;
     if (_currentIndex + 1 < queue.length) {
-      QueueManager().playingFromQueue = true;
       _currentIndex++;
+      widget.playerService.play(queue[_currentIndex]);
+      QueueManager().playingFromQueue = true;
       widget.playerService.setCurrentVideoPlayingFrom('queue');
       widget.playerService.setPlayingDeezerTrackId(
         queue[_currentIndex].id.toString(),
       );
-      widget.playerService.play(queue[_currentIndex]);
       widget.searchService.buildQueueInBackground(queue[_currentIndex]);
       if (mounted) setState(() {});
     }
@@ -93,13 +85,13 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
   void _playPrevious() {
     final queue = widget.queueNotifier.value;
     if (_currentIndex - 1 >= 0) {
-      QueueManager().playingFromQueue = true;
       _currentIndex--;
+      widget.playerService.play(queue[_currentIndex]);
+      QueueManager().playingFromQueue = true;
       widget.playerService.setCurrentVideoPlayingFrom('queue');
       widget.playerService.setPlayingDeezerTrackId(
         queue[_currentIndex].id.toString(),
       );
-      widget.playerService.play(queue[_currentIndex]);
       widget.searchService.buildQueueInBackground(queue[_currentIndex]);
       if (mounted) setState(() {});
     }

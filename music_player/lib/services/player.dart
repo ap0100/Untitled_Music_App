@@ -2,12 +2,15 @@ import 'package:flutter/material.dart' hide RepeatMode;
 import 'package:just_audio/just_audio.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '../utils/repeat_mode.dart';
+import '../services/queue_manager.dart';
+import '../services/search.dart';
 
 class PlayerService extends ChangeNotifier {
-  // Singleton
   static final PlayerService _instance = PlayerService._internal();
   factory PlayerService() => _instance;
-  PlayerService._internal();
+  PlayerService._internal() {
+    _initAutoplay();
+  }
 
   final AudioPlayer _player = AudioPlayer();
   final YoutubeExplode _yt = YoutubeExplode();
@@ -37,6 +40,83 @@ class PlayerService extends ChangeNotifier {
     notifyListeners();
   }
 
+  void _initAutoplay() {
+    // Listen to processing state changes
+    _player.processingStateStream.listen((state) {
+      if (state == ProcessingState.completed) {
+        print('===MYLOG=== Player completed, autoplaying next');
+        _handleTrackEnd();
+      }
+    });
+
+    // Also listen to player state changes (for idle state fallback)
+    _player.playerStateStream.listen((playerState) {
+      if (playerState.processingState == ProcessingState.idle &&
+          playerState.playing == false &&
+          _currentVideo != null) {
+        print('===MYLOG=== Player idle, autoplaying next');
+        _handleTrackEnd();
+      }
+    });
+  }
+
+  void _handleTrackEnd() {
+    if (repeatMode == RepeatMode.one) return;
+
+    final queue = QueueManager().queueNotifier.value;
+    if (queue.isEmpty) return;
+
+    int currentIndex = queue.indexWhere((v) => v.id == _currentVideo?.id);
+    if (currentIndex == -1) currentIndex = 0;
+
+    int nextIndex = currentIndex + 1;
+    if (nextIndex >= queue.length) {
+      // If queue ends, refill with more tracks
+      print('===MYLOG=== Queue empty, refilling');
+      SearchService().buildQueueInBackground(_currentVideo!);
+      // Try again after a short delay (queue might be extended)
+      Future.delayed(Duration(seconds: 1), () {
+        final newQueue = QueueManager().queueNotifier.value;
+        if (newQueue.length > 1) {
+          final next = newQueue[1];
+          _playQueuedTrack(next);
+        }
+      });
+      return;
+    }
+
+    final nextVideo = queue[nextIndex];
+    _playQueuedTrack(nextVideo);
+  }
+
+  Future<void> _playQueuedTrack(Video video) async {
+    try {
+      print('===MYLOG=== Playing queued track: ${video.title}');
+      _currentVideo = video;
+      _isBuffering = true;
+      _isPlaying = false;
+      _currentVideoPlayingFrom = 'queue';
+      QueueManager().playingFromQueue = true;
+      _playingDeezerTrackId = video.id.toString();
+      notifyListeners();
+
+      SearchService().buildQueueInBackground(video);
+
+      final audioUrl = await fetchAudioUrl(video);
+      await _player.setUrl(audioUrl);
+      await _player.play();
+      _isBuffering = false;
+      _isPlaying = true;
+      print('===MYLOG=== Autoplay started: ${video.title}');
+    } catch (e, stack) {
+      print('===MYLOG=== Autoplay error: $e');
+      _isBuffering = false;
+      _isPlaying = false;
+    } finally {
+      notifyListeners();
+    }
+  }
+
   Future<String> fetchAudioUrl(Video video) async {
     var manifest = await _yt.videos.streamsClient.getManifest(video.id);
     var stream = manifest.muxed.first;
@@ -47,7 +127,8 @@ class PlayerService extends ChangeNotifier {
     _currentVideo = video;
     _isBuffering = true;
     _isPlaying = false;
-    notifyListeners(); // <-- immediately notify so mini player appears
+    _playingDeezerTrackId = video.id.toString();
+    notifyListeners();
 
     await _player.stop();
 

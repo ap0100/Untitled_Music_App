@@ -16,6 +16,10 @@ class SearchResultItem {
 }
 
 class SearchService extends ChangeNotifier {
+  static final SearchService _instance = SearchService._internal();
+  factory SearchService() => _instance;
+  SearchService._internal();
+
   final YoutubeExplode _yt = YoutubeExplode();
 
   bool _isLoading = false;
