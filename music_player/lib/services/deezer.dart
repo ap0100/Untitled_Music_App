@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import '../utils/youtube_cleaner.dart';
 import '../services/musicbrainz.dart';
+import '../utils/transliterate.dart';
 
 class DeezerService {
   static const String _baseUrl = 'https://api.deezer.com';
@@ -33,47 +34,65 @@ class DeezerService {
     String title,
     String artist,
   ) async {
-    // Use YouTubeCleaner to extract candidates from the raw YT title/author
+    // Generate candidate pairs from YouTubeCleaner
     final candidates = YouTubeCleaner.parseCandidates(title, artist);
 
-    // Build a deduplicated list of (cleanedTitle, cleanedArtist) queries to try
-    final queries = <(String, String)>[];
-    for (final c in candidates) {
-      queries.add((c.$2.trim(), c.$1.trim())); // (title, artist)
+    // Build a deduplicated set of query strings
+    final querySet = <String>{};
+    for (final (artistName, songTitle) in candidates) {
+      if (artistName.isNotEmpty && songTitle.isNotEmpty) {
+        // Try both orders: "song artist" and "artist song"
+        querySet.add('$songTitle $artistName');
+        querySet.add('$artistName $songTitle');
+      }
     }
-    // Always also try raw cleaned title + raw author as a fallback
-    String cleanedTitle = YouTubeCleaner.cleanTitle(title);
-    if (cleanedTitle.length > 30) cleanedTitle = cleanedTitle.substring(0, 30);
-    queries.add((cleanedTitle, artist));
 
-    print(
-      '===MYLOG=== DeezerService.searchTrack candidates: ${queries.length} for "$title" / "$artist"',
-    );
+    // Also try cleaned title + cleaned artist (from raw)
+    final cleanedTitle = YouTubeCleaner.cleanTitle(title);
+    final cleanedArtist = YouTubeCleaner.cleanTitle(artist);
+    if (cleanedTitle.isNotEmpty && cleanedArtist.isNotEmpty) {
+      querySet.add('$cleanedTitle $cleanedArtist');
+      querySet.add('$cleanedArtist $cleanedTitle');
+    }
+
+    // Try transliterated versions (for non-Latin scripts)
+    final translitTitle = transliterate(cleanedTitle);
+    final translitArtist = transliterate(cleanedArtist);
+    if (translitTitle != cleanedTitle && translitArtist != cleanedArtist) {
+      querySet.add('$translitTitle $translitArtist');
+      querySet.add('$translitArtist $translitTitle');
+    }
+
+    // Fallback: raw title + raw artist (if not already included)
+    querySet.add('$title $artist');
 
     final dio = _getDioClient();
     final tried = <String>{};
 
-    for (final q in queries) {
-      final queryStr = '${q.$1} ${q.$2}'.trim();
-      if (queryStr.isEmpty || !tried.add(queryStr.toLowerCase())) continue;
+    print(
+      '===MYLOG=== DeezerService.searchTrack: ${querySet.length} queries to try',
+    );
 
+    for (final queryStr in querySet) {
+      final normalized = queryStr.trim();
+      if (normalized.isEmpty || !tried.add(normalized.toLowerCase())) continue;
       try {
         final response = await dio.get(
           '/search',
-          queryParameters: {'q': queryStr},
+          queryParameters: {'q': normalized},
         );
         if (response.statusCode == 200) {
           final data = response.data;
           final results = data['data'] as List? ?? [];
           if (results.isNotEmpty) {
             print(
-              '===MYLOG=== Deezer found via "$queryStr": ${results[0]['title']} by ${results[0]['artist']['name']}',
+              '===MYLOG=== Deezer found via "$normalized": ${results[0]['title']} by ${results[0]['artist']['name']}',
             );
             return Map<String, dynamic>.from(results[0] as Map);
           }
         }
       } catch (e) {
-        print('===MYLOG=== Deezer searchTrack error for "$queryStr": $e');
+        print('===MYLOG=== Deezer searchTrack error for "$normalized": $e');
       }
     }
 

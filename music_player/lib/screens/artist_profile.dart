@@ -41,6 +41,7 @@ class _ArtistProfileState extends State<ArtistProfile> {
   //String get _country => widget.area['name'] as String? ?? '';
 
   ValueNotifier<List<Map<String, dynamic>>> albumsNotifier = ValueNotifier([]);
+  bool _albumsLoading = true;
 
   final PlayerService _playerService = PlayerService();
   final SearchService _searchService = SearchService();
@@ -51,7 +52,8 @@ class _ArtistProfileState extends State<ArtistProfile> {
   @override
   void initState() {
     super.initState();
-    _loadAlbums().then((_) => _loadTopTracks());
+    _albumsLoading = true;
+    _loadAlbums().then((_) => _loadSomeTracks());
     _playerService.addListener(_onPlayerChanged);
   }
 
@@ -66,6 +68,8 @@ class _ArtistProfileState extends State<ArtistProfile> {
   }
 
   Future<void> _loadAlbums() async {
+    _albumsLoading = true;
+    if (mounted) setState(() {});
     // Step 1: get albums without covers (fast)
     final albumsList = await MusicBrainzService.getArtistAlbums(
       widget.mbArtistId,
@@ -92,9 +96,12 @@ class _ArtistProfileState extends State<ArtistProfile> {
       // Trigger rebuild of the albums section
       albumsNotifier.value = List.from(albumsList);
     }
+
+    _albumsLoading = false;
+    if (mounted) setState(() {});
   }
 
-  Future<void> _loadTopTracks() async {
+  Future<void> _loadSomeTracks() async {
     _topTracksLoading = true;
     if (mounted) setState(() {});
     topTracksNotifier.value = [];
@@ -102,7 +109,7 @@ class _ArtistProfileState extends State<ArtistProfile> {
     try {
       final albums = albumsNotifier.value;
       if (albums.isEmpty) {
-        print('===MYLOG=== No albums available for top tracks');
+        print('===MYLOG=== No albums available for picking some tracks');
         topTracksNotifier.value = [];
         _topTracksLoading = false;
         if (mounted) setState(() {});
@@ -763,48 +770,9 @@ class _ArtistProfileState extends State<ArtistProfile> {
                                     },
                                   ),
                           ),
-                          /* FutureBuilder<List<Map<String, dynamic>>?>(
-                            future: topTracks,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                  child: CircularProgressIndicator(
-                                    color: Color.fromARGB(255, 234, 169, 240),
-                                    strokeWidth: 2,
-                                  ),
-                                );
-                              }
-                              if (snapshot.hasError ||
-                                  !snapshot.hasData ||
-                                  snapshot.data!.isEmpty) {
-                                return const Center(
-                                  child: Text(
-                                    'No tracks found.',
-                                    style: TextStyle(
-                                      color: Color.fromARGB(118, 250, 162, 253),
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              final tracks = snapshot.data!;
-                              return ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                ),
-                                itemCount: tracks.length,
-                                itemBuilder: (context, index) {
-                                  final track = tracks[index];
-                                  
-                                },
-                              );
-                            },
-                          ),*/
                         ),
 
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -835,171 +803,202 @@ class _ArtistProfileState extends State<ArtistProfile> {
                                   ? MediaQuery.of(context).size.height * 0.35
                                   : MediaQuery.of(context).size.height * 0.29,*/
                                   MediaQuery.of(context).size.height * 0.4,
-                              child: ValueListenableBuilder<List<Map<String, dynamic>>>(
-                                valueListenable: albumsNotifier,
-                                builder: (context, albumList, _) {
-                                  if (albumList.isEmpty) {
-                                    return const Center(
-                                      heightFactor: 2.5,
-                                      child: Text(
-                                        'No albums found.',
-                                        style: TextStyle(
-                                          color: Color.fromARGB(
-                                            118,
-                                            250,
-                                            162,
-                                            253,
-                                          ),
+                              child: _albumsLoading
+                                  ? const Center(
+                                      child: CircularProgressIndicator(
+                                        color: Color.fromARGB(
+                                          255,
+                                          234,
+                                          169,
+                                          240,
                                         ),
+                                        strokeWidth: 2,
                                       ),
-                                    );
-                                  }
-                                  return ListView.builder(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                    ),
-                                    itemCount: albumList.length,
-                                    itemBuilder: (context, index) {
-                                      final album = albumList[index];
-                                      final title =
-                                          album['title'] as String? ??
-                                          'Unknown';
-                                      final cover =
-                                          album['coverArt'] as String? ?? '';
-                                      return GestureDetector(
-                                        onTap: () => _navigateToAlbumView(
-                                          context,
-                                          album,
-                                          cover,
-                                          title,
-                                        ),
-                                        child: Container(
-                                          margin: const EdgeInsets.only(
-                                            bottom: 10,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              colors: [
-                                                const Color.fromARGB(
-                                                  47,
-                                                  209,
-                                                  114,
-                                                  218,
+                                    )
+                                  : ValueListenableBuilder<
+                                      List<Map<String, dynamic>>
+                                    >(
+                                      valueListenable: albumsNotifier,
+                                      builder: (context, albumList, _) {
+                                        if (albumList.isEmpty) {
+                                          return const Center(
+                                            heightFactor: 2.5,
+                                            child: Text(
+                                              'No albums found.',
+                                              style: TextStyle(
+                                                color: Color.fromARGB(
+                                                  118,
+                                                  250,
+                                                  162,
+                                                  253,
                                                 ),
-                                                Colors.transparent,
-                                              ],
-                                              stops: [-0.1, 1.5],
-                                            ),
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(3),
-                                              bottomLeft: Radius.circular(3),
-                                            ),
-                                            border: Border(
-                                              bottom: BorderSide(
-                                                color: const Color.fromARGB(
-                                                  255,
-                                                  133,
-                                                  77,
-                                                  125,
-                                                ),
-                                                width: 1,
                                               ),
                                             ),
+                                          );
+                                        }
+                                        return ListView.builder(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
                                           ),
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                width: 50,
-                                                height: 45,
+                                          itemCount: albumList.length,
+                                          itemBuilder: (context, index) {
+                                            final album = albumList[index];
+                                            final title =
+                                                album['title'] as String? ??
+                                                'Unknown';
+                                            final cover =
+                                                album['coverArt'] as String? ??
+                                                '';
+                                            return GestureDetector(
+                                              onTap: () => _navigateToAlbumView(
+                                                context,
+                                                album,
+                                                cover,
+                                                title,
+                                              ),
+                                              child: Container(
+                                                margin: const EdgeInsets.only(
+                                                  bottom: 10,
+                                                ),
                                                 decoration: BoxDecoration(
-                                                  shape: BoxShape.rectangle,
+                                                  gradient: LinearGradient(
+                                                    colors: [
+                                                      const Color.fromARGB(
+                                                        47,
+                                                        209,
+                                                        114,
+                                                        218,
+                                                      ),
+                                                      Colors.transparent,
+                                                    ],
+                                                    stops: [-0.1, 1.5],
+                                                  ),
                                                   borderRadius:
-                                                      const BorderRadius.only(
+                                                      BorderRadius.only(
                                                         topLeft:
                                                             Radius.circular(3),
                                                         bottomLeft:
                                                             Radius.circular(3),
                                                       ),
-                                                ),
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      const BorderRadius.only(
-                                                        topLeft:
-                                                            Radius.circular(3),
-                                                        bottomLeft:
-                                                            Radius.circular(3),
-                                                      ),
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: cover,
-                                                    fit: BoxFit.cover,
-                                                    placeholder:
-                                                        (context, url) =>
-                                                            const Icon(
-                                                              Icons.album,
-                                                            ),
-                                                    errorWidget:
-                                                        (
-                                                          context,
-                                                          url,
-                                                          error,
-                                                        ) => Image.asset(
-                                                          'lib/graphics/no_thumbnail_found.jpg',
-                                                        ),
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 15),
-                                              Expanded(
-                                                child: Container(
-                                                  width: 50,
-                                                  padding: EdgeInsets.only(
-                                                    bottom: 0.5,
-                                                  ),
-                                                  child: Text(
-                                                    title,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                      color: Color.fromARGB(
-                                                        255,
-                                                        248,
-                                                        217,
-                                                        252,
-                                                      ),
-                                                      fontSize: 14,
+                                                  border: Border(
+                                                    bottom: BorderSide(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                            255,
+                                                            133,
+                                                            77,
+                                                            125,
+                                                          ),
+                                                      width: 1,
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                              IconButton(
-                                                onPressed: () {
-                                                  _navigateToAlbumView(
-                                                    context,
-                                                    album,
-                                                    cover,
-                                                    title,
-                                                  );
-                                                },
-                                                icon: Icon(
-                                                  Icons.arrow_forward_ios_sharp,
-                                                  color: Color.fromARGB(
-                                                    255,
-                                                    133,
-                                                    77,
-                                                    125,
-                                                  ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 50,
+                                                      height: 45,
+                                                      decoration: BoxDecoration(
+                                                        shape:
+                                                            BoxShape.rectangle,
+                                                        borderRadius:
+                                                            const BorderRadius.only(
+                                                              topLeft:
+                                                                  Radius.circular(
+                                                                    3,
+                                                                  ),
+                                                              bottomLeft:
+                                                                  Radius.circular(
+                                                                    3,
+                                                                  ),
+                                                            ),
+                                                      ),
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            const BorderRadius.only(
+                                                              topLeft:
+                                                                  Radius.circular(
+                                                                    3,
+                                                                  ),
+                                                              bottomLeft:
+                                                                  Radius.circular(
+                                                                    3,
+                                                                  ),
+                                                            ),
+                                                        child: CachedNetworkImage(
+                                                          imageUrl: cover,
+                                                          fit: BoxFit.cover,
+                                                          placeholder:
+                                                              (context, url) =>
+                                                                  const Icon(
+                                                                    Icons.album,
+                                                                  ),
+                                                          errorWidget:
+                                                              (
+                                                                context,
+                                                                url,
+                                                                error,
+                                                              ) => Image.asset(
+                                                                'lib/graphics/no_thumbnail_found.jpg',
+                                                              ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 15),
+                                                    Expanded(
+                                                      child: Container(
+                                                        width: 50,
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                              bottom: 0.5,
+                                                            ),
+                                                        child: Text(
+                                                          title,
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: const TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                  255,
+                                                                  248,
+                                                                  217,
+                                                                  252,
+                                                                ),
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    IconButton(
+                                                      onPressed: () {
+                                                        _navigateToAlbumView(
+                                                          context,
+                                                          album,
+                                                          cover,
+                                                          title,
+                                                        );
+                                                      },
+                                                      icon: Icon(
+                                                        Icons
+                                                            .arrow_forward_ios_sharp,
+                                                        color: Color.fromARGB(
+                                                          255,
+                                                          133,
+                                                          77,
+                                                          125,
+                                                        ),
+                                                      ),
+                                                      iconSize: 15,
+                                                    ),
+                                                  ],
                                                 ),
-                                                iconSize: 15,
                                               ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
                               /*FutureBuilder<List<Map<String, dynamic>>?>(
                                 future: albums,
                                 builder: (context, snapshot) {

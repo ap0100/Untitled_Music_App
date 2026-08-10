@@ -75,7 +75,10 @@ class QueueItem extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(4)),
                 child: CachedNetworkImage(
-                  imageUrl: video?.thumbnails.standardResUrl ?? '',
+                  imageUrl:
+                      video?.thumbnails.highResUrl ??
+                      video?.thumbnails.standardResUrl ??
+                      '',
                   fit: BoxFit.cover,
                   width: 90,
                   height: 100,

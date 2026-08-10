@@ -80,7 +80,10 @@ class MiniPlayer extends StatelessWidget {
                   bottomLeft: Radius.circular(5),
                 ),
                 child: CachedNetworkImage(
-                  imageUrl: video?.thumbnails.standardResUrl ?? '',
+                  imageUrl:
+                      video?.thumbnails.highResUrl ??
+                      video?.thumbnails.standardResUrl ??
+                      '',
                   fit: BoxFit.cover,
                   width: 90,
                   height: 100,

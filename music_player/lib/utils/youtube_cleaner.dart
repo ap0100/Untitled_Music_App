@@ -17,17 +17,6 @@ class YouTubeCleaner {
     return t;
   }
 
-  /// Generate a search query for YouTube, optionally including country for disambiguation.
-  static String generateSearchQuery(String artist, {String? country}) {
-    var query = artist.trim();
-    if (country != null && country.isNotEmpty) {
-      query += ' $country';
-    }
-    return query;
-  }
-
-  /// Parse a YouTube video's title and author into a list of (artist, title) candidates.
-  /// This is useful for lyrics lookups or when trying to identify the actual artist/title.
   static List<(String artist, String title)> parseCandidates(
     String rawTitle,
     String rawAuthor,
@@ -90,34 +79,5 @@ class YouTubeCleaner {
       if (seen.add(key)) unique.add((artist, title));
     }
     return unique;
-  }
-
-  static String displayTitle(String rawTitle, String artistName) {
-    String t = rawTitle;
-    // Remove artist name if it appears at the start (case‑insensitive)
-    final escaped = RegExp.escape(artistName);
-    final pattern = RegExp('^$escaped[: -]+', caseSensitive: false);
-    t = t.replaceFirst(pattern, '').trim();
-    // Clean remaining tags
-    t = cleanTitle(t);
-    return t.isNotEmpty ? t : rawTitle; // fallback to raw if empty
-  }
-
-  static String normalizeForDedup(String title) {
-    String t = cleanTitle(title);
-    // Remove everything after the first dash or parenthesis
-    int dash = t.indexOf(' - ');
-    int paren = t.indexOf('(');
-    int bracket = t.indexOf('[');
-    int firstSeparator = [dash, paren, bracket]
-        .where((pos) => pos > 0)
-        .fold<int>(t.length, (min, pos) => pos < min ? pos : min);
-    if (firstSeparator < t.length) {
-      t = t.substring(0, firstSeparator);
-    }
-    t = t.replaceAll(RegExp(r'[^\w\s]'), '');
-    t = t.replaceAll(RegExp(r'\s+'), ' ').trim();
-    if (t.length > 30) t = t.substring(0, 30);
-    return t.toLowerCase();
   }
 }
