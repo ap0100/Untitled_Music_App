@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../services/player.dart';
 import '../utils/transliterate.dart';
+import 'dart:async';
 
 class LyricsService {
   static const String baseUrl = 'https://lrclib.net/api';
-  final PlayerService playerService = PlayerService();
 
   static Future<Map<String, dynamic>?> getLyricsByTitle(
     String artist,
@@ -16,7 +16,6 @@ class LyricsService {
     try {
       print("===MYLOG=== LyricsService: fetching '$title' by '$artist'");
 
-      // 1. Exact lookup via /get
       final getUri = Uri.parse(
         '$baseUrl/get?artist_name=${Uri.encodeComponent(transliterate(artist))}&track_name=${Uri.encodeComponent(transliterate(title))}',
       );
@@ -33,7 +32,6 @@ class LyricsService {
         }
       }
 
-      // 2. Search and pick best match
       final searchUri = Uri.parse(
         '$baseUrl/search?artist_name=${Uri.encodeComponent(transliterate(artist))}&track_name=${Uri.encodeComponent(transliterate(title))}',
       );
@@ -65,7 +63,6 @@ class LyricsService {
     final r = (returned as String).toLowerCase().trim();
     final q = query.toLowerCase().trim();
     if (r == q) return true;
-    // One must contain the other (handles "Kygo" vs "Kygo & Ellie Goulding")
     return r.contains(q) || q.contains(r);
   }
 
@@ -74,8 +71,7 @@ class LyricsService {
     final r = (returned as String).toLowerCase().trim();
     final q = query.toLowerCase().trim();
     if (r == q) return true;
-    // The longer must contain the shorter — prevents "Love" matching "I Love Rock and Roll"
-    if (q.length < 4) return r == q; // very short titles must be exact
+    if (q.length < 4) return r == q;
     return r.contains(q) || q.contains(r);
   }
 
@@ -85,25 +81,19 @@ class LyricsService {
 
     for (final line in lines) {
       if (line.trim().isEmpty) continue;
-
       final firstClosedBracket = line.indexOf(']');
       if (firstClosedBracket == -1) continue;
-
-      final timeStamp = line.substring(1, firstClosedBracket),
-          text = line.substring(firstClosedBracket + 1).trim();
+      final timeStamp = line.substring(1, firstClosedBracket);
+      final text = line.substring(firstClosedBracket + 1).trim();
       if (text.isEmpty) continue;
-
       final parts = timeStamp.split(':');
       if (parts.length != 2) continue;
-
-      final mins = int.tryParse(parts[0]) ?? 0, secsPart = parts[1].split('.');
+      final mins = int.tryParse(parts[0]) ?? 0;
+      final secsPart = parts[1].split('.');
       if (secsPart.length != 2) continue;
-
-      final secs = int.tryParse(secsPart[0]) ?? 0,
-          millis = int.tryParse(secsPart[1]) ?? 0;
-
+      final secs = int.tryParse(secsPart[0]) ?? 0;
+      final millis = int.tryParse(secsPart[1]) ?? 0;
       final time = Duration(minutes: mins, seconds: secs, milliseconds: millis);
-
       entries.add(MapEntry(time, text));
     }
 
@@ -129,47 +119,67 @@ class LyricsDisplay extends StatefulWidget {
 class _LyricsDisplayState extends State<LyricsDisplay> {
   bool syncedLyrics = false;
   List<MapEntry<Duration, String>> _entries = [];
+  Duration _currentPos = Duration.zero;
   int _currentIndex = -1;
   final ScrollController _scrollController = ScrollController();
-  Duration? _currentPos = Duration.zero;
+  StreamSubscription<Duration>? _positionSubscription;
 
   @override
   void initState() {
     super.initState();
-    _checkLyricType();
-    if (syncedLyrics) {
-      widget.playerService.player.positionStream.listen((pos) {
-        setState(() {
-          _currentPos = pos;
-          _currentIndex = _currentLineIndex(pos);
-        });
-        _scrollToCurrentLine();
+    _parseLyrics();
+
+    // Set initial position immediately
+    _currentPos = widget.playerService.player.position;
+    _updateIndex();
+
+    // Listen to position changes
+    _positionSubscription = widget.playerService.player.positionStream.listen((
+      pos,
+    ) {
+      if (!mounted) return;
+      setState(() {
+        _currentPos = pos;
+        _updateIndex();
       });
-    }
+      // Defer scroll until after the rebuild so controller is attached
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _scrollToCurrentLine();
+      });
+    });
+
+    // Force a scroll after the first frame (controller will be attached)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _scrollToCurrentLine();
+      }
+    });
   }
 
   @override
   void didUpdateWidget(LyricsDisplay oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.lyrics != widget.lyrics) {
-      // Lyrics changed – re-parse
-      _checkLyricType();
-      // Reset position listener if needed
-      if (syncedLyrics) {
-        _currentPos = Duration.zero;
-        _currentIndex = -1;
-      }
+      _parseLyrics();
+      _currentPos = widget.playerService.player.position;
+      _updateIndex();
       setState(() {});
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _scrollToCurrentLine();
+        }
+      });
     }
   }
 
   @override
   void dispose() {
+    _positionSubscription?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
 
-  void _checkLyricType() {
+  void _parseLyrics() {
     final hasTimestamps = RegExp(
       r'\[\d{2}:\d{2}\.\d{2,3}\]',
     ).hasMatch(widget.lyrics);
@@ -181,24 +191,33 @@ class _LyricsDisplayState extends State<LyricsDisplay> {
     }
   }
 
-  int _currentLineIndex(Duration pos) {
+  void _updateIndex() {
     int idx = -1;
     for (int i = 0; i < _entries.length; i++) {
-      if (_entries[i].key <= pos) idx = i;
+      if (_entries[i].key <= _currentPos) idx = i;
     }
-    return idx;
+    _currentIndex = idx;
   }
 
   void _scrollToCurrentLine() {
     if (_currentIndex < 0 || _currentIndex >= _entries.length) return;
+    if (!_scrollController.hasClients) {
+      // Controller not attached yet – retry after a short delay
+      Future.delayed(const Duration(milliseconds: 50), () {
+        if (mounted) {
+          _scrollToCurrentLine();
+        }
+      });
+      return;
+    }
     final double lineHeight = 29;
-    final double centeredOffset =
-        (_currentIndex * lineHeight) -
-        (_scrollController.position.viewportDimension / 2) +
-        (lineHeight / 2);
+    final double viewport = _scrollController.position.viewportDimension;
+    final double maxScroll = _scrollController.position.maxScrollExtent;
+    final double target =
+        (_currentIndex * lineHeight) - (viewport / 2) + (lineHeight / 2);
     _scrollController.animateTo(
-      centeredOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
-      duration: Duration(milliseconds: 150),
+      target.clamp(0.0, maxScroll),
+      duration: const Duration(milliseconds: 150),
       curve: Curves.easeOut,
     );
   }
@@ -206,10 +225,10 @@ class _LyricsDisplayState extends State<LyricsDisplay> {
   @override
   Widget build(BuildContext context) {
     if (widget.lyrics.isEmpty) {
-      return Center(
+      return const Center(
         child: Text(
           'No lyrics found.',
-          style: TextStyle(color: const Color.fromARGB(118, 250, 162, 253)),
+          style: TextStyle(color: Color.fromARGB(118, 250, 162, 253)),
         ),
       );
     }
@@ -240,16 +259,16 @@ class _LyricsDisplayState extends State<LyricsDisplay> {
       padding: const EdgeInsets.all(16),
       itemCount: _entries.length,
       itemBuilder: (context, index) {
-        final entry = _entries[index],
-            active = _currentPos! > entry.key && index == _currentIndex;
+        final entry = _entries[index];
+        final active = _currentPos >= entry.key && index == _currentIndex;
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Text(
             entry.value,
             style: TextStyle(
               color: active
-                  ? Color.fromARGB(235, 210, 250, 247)
-                  : Color.fromARGB(186, 205, 248, 241),
+                  ? const Color.fromARGB(235, 210, 250, 247)
+                  : const Color.fromARGB(186, 205, 248, 241),
               fontSize: 15,
               fontWeight: active ? FontWeight.bold : FontWeight.normal,
             ),

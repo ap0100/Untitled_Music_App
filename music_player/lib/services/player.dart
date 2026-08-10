@@ -41,20 +41,9 @@ class PlayerService extends ChangeNotifier {
   }
 
   void _initAutoplay() {
-    // Listen to processing state changes
     _player.processingStateStream.listen((state) {
       if (state == ProcessingState.completed) {
         print('===MYLOG=== Player completed, autoplaying next');
-        _handleTrackEnd();
-      }
-    });
-
-    // Also listen to player state changes (for idle state fallback)
-    _player.playerStateStream.listen((playerState) {
-      if (playerState.processingState == ProcessingState.idle &&
-          playerState.playing == false &&
-          _currentVideo != null) {
-        print('===MYLOG=== Player idle, autoplaying next');
         _handleTrackEnd();
       }
     });
@@ -109,7 +98,7 @@ class PlayerService extends ChangeNotifier {
       _isPlaying = true;
       print('===MYLOG=== Autoplay started: ${video.title}');
     } catch (e, stack) {
-      print('===MYLOG=== Autoplay error: $e');
+      print('===MYLOG=== Autoplay error: $e, $stack');
       _isBuffering = false;
       _isPlaying = false;
     } finally {

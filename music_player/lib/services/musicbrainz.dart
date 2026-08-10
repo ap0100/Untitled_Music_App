@@ -354,7 +354,14 @@ class MusicBrainzService {
           data['release-groups'] ?? [],
         );
 
-        final blacklist = ['anal', 'orgasm', 'tribute', 'karaoke'];
+        final blacklist = [
+          'anal',
+          'orgasm',
+          'tribute',
+          'karaoke',
+          'lick',
+          'lickers',
+        ];
         final filtered = releaseGroups.where((rg) {
           final title = (rg['title'] as String? ?? '').toLowerCase();
           return !blacklist.any((word) => title.contains(word));

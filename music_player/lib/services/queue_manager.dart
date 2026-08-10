@@ -3,10 +3,11 @@ import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class QueueManager {
-  bool playingFromQueue = false;
   static final QueueManager _instance = QueueManager._internal();
   factory QueueManager() => _instance;
   QueueManager._internal();
+
+  bool playingFromQueue = false;
 
   final ValueNotifier<List<Video>> queueNotifier = ValueNotifier([]);
 
