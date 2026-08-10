@@ -511,7 +511,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                     fontSize: 17,
                   ),
                 ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.69),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.685),
                 if (queueLoading)
                   const SizedBox(
                     width: 17,

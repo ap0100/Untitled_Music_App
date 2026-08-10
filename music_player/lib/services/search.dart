@@ -106,13 +106,12 @@ class SearchService extends ChangeNotifier {
       final artistId = track['artist']['id'] as int;
       final bool extending = QueueManager().playingFromQueue;
 
-      // Fetch a massive pool: 30 top tracks + 15 related artists × 8 tracks = 150 candidates
       final fetchResults = await Future.wait([
-        DeezerService.getArtistTopTracks(artistId, limit: extending ? 7 : 30),
+        DeezerService.getArtistTopTracks(artistId, limit: extending ? 7 : 20),
         DeezerService.getRelatedArtistsTracks(
           artistId,
-          artistLimit: extending ? 5 : 12,
-          tracksPerArtist: extending ? 3 : 7,
+          artistLimit: extending ? 6 : 13,
+          tracksPerArtist: extending ? 4 : 8,
         ),
       ]);
       if (_queueId != myId) return;
