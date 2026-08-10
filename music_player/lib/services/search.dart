@@ -88,7 +88,11 @@ class SearchService extends ChangeNotifier {
         currentVideo.title,
         currentVideo.author,
       );
-      if (track == null || _queueId != myId) return;
+      if (track == null || _queueId != myId) {
+        _isBuildingQueue = false;
+        notifyListeners();
+        return;
+      }
 
       DeezerService.deezerIds.putIfAbsent(
         currentVideo.id.value,
@@ -106,15 +110,39 @@ class SearchService extends ChangeNotifier {
       final artistId = track['artist']['id'] as int;
       final bool extending = QueueManager().playingFromQueue;
 
+      // Determine target queue size based on extending state
+      int currentSize = QueueManager().queueNotifier.value.length;
+      int targetSize;
+      if (extending) {
+        // When extending, add up to 5 new tracks
+        targetSize = currentSize + 5;
+      } else {
+        // Initial build: aim for 20 total
+        targetSize = 20;
+      }
+      if (targetSize <= currentSize) {
+        print('===MYLOG=== Queue already at target size, no new tracks needed');
+        _isBuildingQueue = false;
+        notifyListeners();
+        return;
+      }
+      final int maxToAdd = targetSize - currentSize;
+      print('===MYLOG=== Need to add up to $maxToAdd new tracks');
+
+      // Fetch candidates
       final fetchResults = await Future.wait([
-        DeezerService.getArtistTopTracks(artistId, limit: extending ? 7 : 20),
+        DeezerService.getArtistTopTracks(artistId, limit: extending ? 10 : 20),
         DeezerService.getRelatedArtistsTracks(
           artistId,
-          artistLimit: extending ? 6 : 13,
+          artistLimit: extending ? 7 : 13,
           tracksPerArtist: extending ? 4 : 8,
         ),
       ]);
-      if (_queueId != myId) return;
+      if (_queueId != myId) {
+        _isBuildingQueue = false;
+        notifyListeners();
+        return;
+      }
 
       final seenDeezerIds = <int>{};
       final recommended = <Map<String, dynamic>>[];
@@ -122,19 +150,27 @@ class SearchService extends ChangeNotifier {
         final id = t['id'] as int?;
         if (id != null && seenDeezerIds.add(id)) recommended.add(t);
       }
-      if (recommended.isEmpty || _queueId != myId) return;
+      if (recommended.isEmpty || _queueId != myId) {
+        _isBuildingQueue = false;
+        notifyListeners();
+        return;
+      }
 
       // Seed dedup set from existing queue
       final seenVideoIds = QueueManager().queueNotifier.value
           .map((v) => v.id.value)
           .toSet();
 
+      int addedCount = 0;
       int next = 0;
+      final int totalCandidates = recommended.length;
+
       Future<void> worker() async {
         while (true) {
           if (_queueId != myId) return;
+          if (addedCount >= maxToAdd) return; // stop when target reached
           final i = next++;
-          if (i >= recommended.length) return;
+          if (i >= totalCandidates) return;
 
           final t = recommended[i];
           final deezerTitle = t['title'] as String? ?? '';
@@ -143,7 +179,7 @@ class SearchService extends ChangeNotifier {
           if (_queueId != myId) return;
           if (video == null) continue;
 
-          // Deduplicate only by video ID – title dedup removed to get more tracks
+          // Deduplicate by video ID
           if (!seenVideoIds.add(video.id.value)) continue;
 
           QueueManager().addToQueue(video);
@@ -152,6 +188,7 @@ class SearchService extends ChangeNotifier {
             'title': deezerTitle,
             'artist': deezerArtist,
           };
+          addedCount++;
           notifyListeners();
           print(
             '===MYLOG=== Queue +1 → ${QueueManager().queueNotifier.value.length} "$deezerTitle"',
@@ -159,8 +196,11 @@ class SearchService extends ChangeNotifier {
         }
       }
 
-      // 8 workers, each fetching up to the end of the list
+      // Run 8 workers in parallel
       await Future.wait(List.generate(8, (_) => worker()));
+      print(
+        '===MYLOG=== Queue built: total ${QueueManager().queueNotifier.value.length} tracks (added $addedCount)',
+      );
     } catch (e, stack) {
       print('===MYLOG=== _buildProgressively ERROR: $e\n$stack');
     } finally {
@@ -182,81 +222,81 @@ class SearchService extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final results = await Future.wait([
-        MusicBrainzService.searchArtists(query),
-        MusicBrainzService.searchAlbums(query),
-        DeezerService.searchTracks(query),
-        _yt.search
-            .search(query)
-            .then((r) => r.toList())
-            .catchError((_) => <Video>[]),
+      // Fire all top-level fetches in parallel — each one pushes results
+      // as soon as it finishes, so the UI updates progressively.
+      await Future.wait([
+        _fetchAndPushTracks(query),
+        _fetchAndPushArtists(query),
+        _fetchAndPushAlbums(query),
+        _fetchAndPushYouTube(query),
       ]);
+    } catch (e) {
+      print('===MYLOG=== search error: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
-      final deezerData = Map<String, dynamic>.from(results[2] as Map? ?? {}),
-          musicbrainzArtists = List<Map<String, dynamic>>.from(
-            results[0] as List? ?? [],
-          ),
-          musicbrainzAlbums = List<Map<String, dynamic>>.from(
-            results[1] as List? ?? [],
-          ),
-          youtubeData = List<Video>.from(results[3] as List? ?? []);
-
-      // ---------- ARTISTS (now using embedded 'image' from MusicBrainz) ----------
-      for (final artist in musicbrainzArtists) {
-        try {
-          final cover =
-              artist['image'] as String? ??
-              'lib/graphics/no_thumbnail_found.jpg';
-          _searchResults.add(
-            SearchResultItem(
-              type: SearchResultType.artist,
-              data: {
-                'id': artist['id'],
-                'name': artist['name'],
-                'picture_medium': cover,
-                'source': 'musicbrainz',
-                'type': artist['type'] ?? '',
-                'lifeSpan': Map<String, dynamic>.from(artist['lifeSpan'] ?? {}),
-                'area': Map<String, dynamic>.from(artist['area'] ?? {}),
-                'tags': List<String>.from(artist['tags'] as List? ?? []),
-              },
-            ),
-          );
-        } catch (e) {
-          print('===MYLOG=== search: artist result error: $e');
-        }
+  Future<void> _fetchAndPushTracks(String query) async {
+    try {
+      final deezerData = await DeezerService.searchTracks(query);
+      _nextTrackUrl = deezerData['nextTrackUrl'] as String?;
+      final tracks = List<Map<String, dynamic>>.from(
+        deezerData['tracks'] as List? ?? [],
+      );
+      for (final t in tracks) {
+        _searchResults.add(
+          SearchResultItem(type: SearchResultType.track, data: t),
+        );
       }
+      if (tracks.isNotEmpty) notifyListeners();
+    } catch (e) {
+      print('===MYLOG=== _fetchAndPushTracks error: $e');
+    }
+  }
 
-      // ---------- ALBUMS (now using embedded 'coverArt' from MusicBrainz) ----------
-      // Keep Deezer only for deezer_id (playback)
+  Future<void> _fetchAndPushArtists(String query) async {
+    try {
+      final musicbrainzArtists = await MusicBrainzService.searchArtists(query);
+      for (final artist in musicbrainzArtists) {
+        _searchResults.add(
+          SearchResultItem(
+            type: SearchResultType.artist,
+            data: {
+              'id': artist['id'],
+              'name': artist['name'],
+              'picture_medium':
+                  artist['image'] as String? ??
+                  'lib/graphics/no_thumbnail_found.jpg',
+              'source': 'musicbrainz',
+              'type': artist['type'] ?? '',
+              'lifeSpan': Map<String, dynamic>.from(artist['lifeSpan'] ?? {}),
+              'area': Map<String, dynamic>.from(artist['area'] ?? {}),
+              'tags': List<String>.from(artist['tags'] as List? ?? []),
+            },
+          ),
+        );
+      }
+      if (musicbrainzArtists.isNotEmpty) notifyListeners();
+    } catch (e) {
+      print('===MYLOG=== _fetchAndPushArtists error: $e');
+    }
+  }
+
+  Future<void> _fetchAndPushAlbums(String query) async {
+    try {
+      final musicbrainzAlbums = await MusicBrainzService.searchAlbums(query);
+      // Process each album and push immediately as it resolves
       final albumFutures = musicbrainzAlbums.map((album) async {
-        final albumId = album['id'] as String? ?? '';
-        final albumTitle = album['title'] as String? ?? '';
-        final artistName =
-            await MusicBrainzService.getArtistNameFromReleaseGroup(albumId);
-        // Still need Deezer ID for tracks
-        final deezerAlbum = artistName != null
-            ? await DeezerService.findDeezerAlbum(artistName, albumTitle)
-            : null;
-        return {
-          'album': album,
-          'artistName': artistName ?? '',
-          'deezerAlbum': deezerAlbum,
-        };
-      }).toList();
-
-      final albumResults = await Future.wait(albumFutures);
-
-      for (final result in albumResults) {
         try {
-          final album = result['album'] as Map<String, dynamic>?;
-          if (album == null) continue;
-          final artistName = result['artistName'] as String? ?? '';
-          final deezerAlbum = result['deezerAlbum'] != null
-              ? Map<String, dynamic>.from(result['deezerAlbum'] as Map)
+          final albumId = album['id'] as String? ?? '';
+          final albumTitle = album['title'] as String? ?? '';
+          final artistName =
+              await MusicBrainzService.getArtistNameFromReleaseGroup(albumId);
+          final deezerAlbum = artistName != null
+              ? await DeezerService.findDeezerAlbum(artistName, albumTitle)
               : null;
-
-          // --- Use coverArt from MusicBrainz, not from Deezer ---
           final cover =
               album['coverArt'] as String? ??
               '../graphics/no_thumbnail_found.jpg';
@@ -265,13 +305,13 @@ class SearchService extends ChangeNotifier {
             SearchResultItem(
               type: SearchResultType.album,
               data: {
-                'id': album['id'] ?? '',
-                'title': album['title'] ?? '',
-                'artist': {'name': artistName},
+                'id': albumId,
+                'title': albumTitle,
+                'artist': {'name': artistName ?? ''},
                 'cover_medium': cover,
                 'cover_big': cover,
                 'cover_small': cover,
-                'deezer_id': deezerAlbum?['id'], // only for playback
+                'deezer_id': deezerAlbum?['id'],
                 'date': album['date'] ?? '',
                 'secondaryTypes': List<String>.from(
                   album['secondaryTypes'] as List? ?? [],
@@ -283,32 +323,30 @@ class SearchService extends ChangeNotifier {
               },
             ),
           );
+          notifyListeners(); // push each album as it arrives
         } catch (e) {
-          print('===MYLOG=== search: album result error: $e');
+          print('===MYLOG=== album result error: $e');
         }
-      }
+      }).toList();
 
-      // ---------- Tracks from Deezer (unchanged) ----------
-      try {
-        for (final t in List<Map<String, dynamic>>.from(
-          deezerData['tracks'] as List? ?? [],
-        )) {
-          _searchResults.add(
-            SearchResultItem(type: SearchResultType.track, data: t),
-          );
-        }
-      } catch (e) {
-        print('===MYLOG=== search: deezer tracks error: $e');
-      }
+      await Future.wait(albumFutures);
+    } catch (e) {
+      print('===MYLOG=== _fetchAndPushAlbums error: $e');
+    }
+  }
 
-      _nextTrackUrl = deezerData['nextTrackUrl'] as String?;
+  Future<void> _fetchAndPushYouTube(String query) async {
+    try {
+      final youtubeData = await _yt.search
+          .search(query)
+          .then((r) => r.toList())
+          .catchError((_) => <Video>[]);
 
-      // ---------- YouTube cross‑match (unchanged) ----------
-      // ... (same as before)
       final deezerTracks = _searchResults
           .where((i) => i.type == SearchResultType.track)
           .toList();
 
+      bool added = false;
       for (final video in youtubeData) {
         final vtLower = video.title.toLowerCase();
         SearchResultItem? matched;
@@ -335,13 +373,12 @@ class SearchService extends ChangeNotifier {
               video: video,
             ),
           );
+          added = true;
         }
       }
+      if (added) notifyListeners();
     } catch (e) {
-      print('===MYLOG=== search error: $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+      print('===MYLOG=== _fetchAndPushYouTube error: $e');
     }
   }
 
