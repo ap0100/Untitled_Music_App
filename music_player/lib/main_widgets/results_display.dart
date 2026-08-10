@@ -1,0 +1,430 @@
+import 'package:flutter/material.dart';
+import 'package:music_player/screens/album_view.dart';
+import '../services/player.dart';
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
+import '../screens/artist_profile.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+class ArtistDisplay extends StatelessWidget {
+  final String? name;
+  final String coverUrl;
+  final String? artistId;
+  final String? type;
+  final List<dynamic> genre;
+  final Map<String?, dynamic> span, area;
+
+  const ArtistDisplay({
+    super.key,
+    required this.name,
+    required this.coverUrl,
+    required this.artistId,
+    required this.type,
+    required this.genre,
+    required this.span,
+    required this.area,
+  });
+
+  void _navigateToArtistProfile(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ArtistProfile(
+          artistName: name ?? 'Unknown Artist',
+          artistImage: coverUrl,
+          mbArtistId: artistId,
+          genre: genre,
+          type: type,
+          span: span,
+          area: area,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final thumbnail = coverUrl;
+    return GestureDetector(
+      onTap: () {
+        _navigateToArtistProfile(context); // Replace 1 with actual artist ID
+      },
+      child: Container(
+        height: 57,
+        padding: EdgeInsets.only(top: 5, bottom: 5, left: 7, right: 10),
+        margin: EdgeInsets.only(top: 5, bottom: 5, left: 7, right: 10),
+        decoration: BoxDecoration(
+          //color: const Color.fromARGB(255, 23, 19, 31),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(100),
+            bottomLeft: Radius.circular(100),
+            bottomRight: Radius.circular(10),
+            topRight: Radius.circular(10),
+          ),
+          border: Border(
+            bottom: BorderSide(
+              color: const Color.fromARGB(144, 248, 205, 246),
+              width: 1,
+            ),
+          ),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: const [
+              Color.fromARGB(115, 146, 67, 142),
+              Colors.transparent,
+            ],
+            stops: [0.1, 1.5],
+          ),
+        ),
+        child: Row(
+          spacing: 10,
+          children: [
+            Container(
+              height: 46,
+              width: 46,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: const Color.fromARGB(160, 248, 205, 246),
+                  width: 1,
+                ),
+              ),
+              child: ClipOval(
+                child: CachedNetworkImage(
+                  imageUrl: thumbnail,
+                  fit: BoxFit.cover,
+                  errorWidget: (context, url, error) => Image.asset(
+                    'lib/graphics/no_thumbnail_found.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.6,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    name ?? 'Unknown Artist',
+                    style: const TextStyle(
+                      color: Color.fromARGB(228, 243, 205, 248),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Artist',
+                    style: const TextStyle(
+                      color: Color.fromARGB(181, 243, 205, 248),
+                      fontSize: 11,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              padding: EdgeInsets.only(left: 25),
+              icon: const Icon(Icons.arrow_forward_ios_rounded, size: 15),
+              color: const Color.fromARGB(212, 253, 146, 246),
+              onPressed: () {
+                _navigateToArtistProfile(context);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class AlbumDisplay extends StatelessWidget {
+  final title;
+  final artistName;
+  final coverUrl;
+  final String? releaseGroupId;
+  final String? primaryType;
+  final List<dynamic> secondaryTypes;
+  final String? disambiguation;
+  final List<dynamic> tags;
+
+  const AlbumDisplay({
+    required this.title,
+    required this.artistName,
+    required this.coverUrl,
+    required this.releaseGroupId,
+    required this.primaryType,
+    required this.secondaryTypes,
+    required this.disambiguation,
+    required this.tags,
+  });
+
+  void _navigateToAlbumProfile(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AlbumView(
+          artistName: artistName ?? 'Unknown Artist',
+          albumCover: coverUrl,
+          albumName: title ?? 'Unknown Album',
+          mbReleaseGroupId: releaseGroupId,
+          primaryType: primaryType,
+          secondaryTypes: secondaryTypes,
+          disambiguation: disambiguation,
+          tags: tags,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        _navigateToAlbumProfile(context);
+      },
+      child: Container(
+        height: 55,
+        padding: EdgeInsets.only(top: 6, bottom: 6, left: 7, right: 10),
+        margin: EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
+        decoration: BoxDecoration(
+          //color: const Color.fromARGB(255, 23, 19, 31),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(5),
+            bottomLeft: Radius.circular(5),
+            bottomRight: Radius.circular(5),
+            topRight: Radius.circular(5),
+          ),
+          border: Border(
+            bottom: BorderSide(
+              color: const Color.fromARGB(144, 205, 248, 241),
+              width: 1,
+            ),
+          ),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: const [
+              Color.fromARGB(115, 67, 146, 133),
+              Colors.transparent,
+            ],
+            stops: [0.1, 1.5],
+          ),
+        ),
+        child: Row(
+          spacing: 10,
+          children: [
+            Container(
+              height: 50,
+              width: 45,
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(
+                  color: const Color.fromARGB(160, 205, 248, 241),
+                  width: 1,
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: CachedNetworkImage(
+                  imageUrl: coverUrl,
+                  fit: BoxFit.cover,
+                  width: 45,
+                  height: 50,
+                  errorWidget: (context, url, error) => Image.asset(
+                    'lib/graphics/no_thumbnail_found.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.6,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title ?? 'Unknown Album',
+                    style: const TextStyle(
+                      color: Color.fromARGB(227, 205, 248, 239),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Album',
+                    style: const TextStyle(
+                      color: Color.fromARGB(181, 243, 205, 248),
+                      fontSize: 11,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              padding: EdgeInsets.only(left: 25),
+              icon: const Icon(Icons.arrow_forward_ios_rounded, size: 15),
+              color: const Color.fromARGB(211, 146, 253, 239),
+              onPressed: () {
+                _navigateToAlbumProfile(context);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class TrackDisplay extends StatelessWidget {
+  final Video? video;
+  final String? deezerCoverUrl;
+  final String? deezerTitle;
+  final String? deezerArtist;
+  final String? deezerTrackId; // Deezer track ID for correct isPlaying check
+  final PlayerService playerService;
+  final Color? bgColor;
+  final Color? darkened;
+  final VoidCallback? onPlay;
+
+  const TrackDisplay({
+    super.key,
+    this.video,
+    this.deezerCoverUrl,
+    this.deezerTitle,
+    this.deezerArtist,
+    this.deezerTrackId,
+    required this.playerService,
+    required this.bgColor,
+    required this.darkened,
+    required this.onPlay,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Compare against Deezer ID (set on play) — YouTube video ID is unrelated
+    final bool _isPlaying =
+        deezerTrackId != null &&
+        playerService.playingDeezerTrackId == deezerTrackId &&
+        playerService.currentVideoPlayingFrom == 'search_screen';
+    final String thumbUrl =
+        video?.thumbnails.highResUrl ??
+        video?.thumbnails.standardResUrl ??
+        deezerCoverUrl ??
+        '../graphics/no_thumbnail_found.jpg';
+    final String title = video?.title ?? deezerTitle ?? '';
+    final String author = video?.author ?? deezerArtist ?? '';
+
+    return GestureDetector(
+      onTap: () => onPlay?.call(),
+      child: Container(
+        height: 65,
+        padding: EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.95,
+          height: MediaQuery.of(context).size.height * 0.07,
+          padding: EdgeInsets.only(top: 1, bottom: 0, left: 0, right: 8),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: !_isPlaying
+                  ? [darkened!.withValues(alpha: 0.35), Colors.transparent]
+                  : [
+                      const Color.fromARGB(118, 250, 162, 253),
+                      const Color.fromARGB(134, 162, 253, 248),
+                    ],
+              stops: [0.0, 1.5],
+            ),
+            borderRadius: BorderRadius.circular(5),
+            border: Border(
+              bottom: BorderSide(
+                color: _isPlaying
+                    ? Color.fromARGB(255, 159, 135, 161)
+                    : Color.fromARGB(184, 129, 109, 131),
+                width: 1,
+              ),
+            ),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 0, bottom: 0, left: 1, right: 10),
+                width: 80,
+                height: 65,
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(5),
+                    topLeft: Radius.circular(5),
+                  ),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: thumbUrl,
+                  fit: BoxFit.cover,
+                  errorWidget: ((context, url, error) =>
+                      Image.asset('lib/graphics/no_thumbnail_found.jpg')),
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 10),
+                    Text(
+                      title,
+                      style: TextStyle(
+                        color: _isPlaying
+                            ? const Color.fromARGB(255, 248, 205, 246)
+                            : const Color.fromARGB(255, 205, 248, 241),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      author,
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 186, 172, 187),
+                        fontSize: 11,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.fade,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 10),
+              IconButton(
+                icon: Icon(
+                  Icons.menu_sharp,
+                  color: Color.fromARGB(188, 248, 205, 246),
+                ),
+                iconSize: 22,
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
