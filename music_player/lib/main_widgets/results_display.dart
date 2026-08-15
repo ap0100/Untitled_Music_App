@@ -345,8 +345,10 @@ class TrackDisplay extends StatelessWidget {
                 child: Container(
                   height: 51,
                   color: isPlaying
-                      ? JinxTheme.violetBlue
-                      : JinxTheme.regalBlue /* isPlaying
+                      ? JinxTheme.violetBlue.withValues(alpha: 0.55)
+                      : JinxTheme.brightTurquoise.withValues(
+                          alpha: 0.7,
+                        ) /* isPlaying
                     ? Color.fromARGB(255, 159, 135, 161)
                     : Color.fromARGB(184, 129, 109, 131)*/,
                 ),
@@ -355,11 +357,13 @@ class TrackDisplay extends StatelessWidget {
             ClipPath(
               clipper: TrackDisplayClipper(offset: 10),
               child: Transform.translate(
-                offset: Offset(12, -1),
+                offset: Offset(12.5, -1),
                 child: Container(
-                  width: MediaQuery.of(context).size.width * 0.929,
-                  height: MediaQuery.of(context).size.height * 0.065,
-                  color: isPlaying ? JinxTheme.violetBlue : JinxTheme.regalBlue,
+                  width: MediaQuery.of(context).size.width * 0.927,
+                  height: MediaQuery.of(context).size.height * 0.062,
+                  color: isPlaying
+                      ? JinxTheme.violetBlue.withValues(alpha: 0.65)
+                      : JinxTheme.brightTurquoise.withValues(alpha: 0.7),
                 ),
               ),
             ),
@@ -371,25 +375,28 @@ class TrackDisplay extends StatelessWidget {
                 padding: EdgeInsets.only(right: 8),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                     colors: !isPlaying
                         ? [
-                            // JinxTheme.midnightExpress.withValues(alpha: 0.8),
-                            darkened?.withValues(alpha: 0.4) ?? Colors.amber,
-                            JinxTheme.midnightExpress.withValues(alpha: 0.85),
+                            JinxTheme.midnightExpressOpposite.withValues(
+                              alpha: 0.85,
+                            ),
+                            JinxTheme.midnightExpress.withValues(alpha: 0.8),
+                            //darkened?.withValues(alpha: 0.85) ?? Colors.amber,
+
                             //darkened!.withValues(alpha: 0.5), //0.35),
                             //Colors.transparent,
                           ]
                         : [
                             JinxTheme.brightTurquoise.withValues(
-                              alpha: 0.7,
+                              alpha: 0.5,
                             ), //const Color.fromARGB(118, 250, 162, 253),
                             JinxTheme.brightTurquoise.withValues(
                               alpha: 0.35,
                             ), //const Color.fromARGB(134, 162, 253, 248),
                           ],
-                    stops: [0, 0.8],
+                    stops: [0.35, 1.5],
                   ),
                 ),
                 child: Row(
@@ -403,8 +410,10 @@ class TrackDisplay extends StatelessWidget {
                             height: 60,
                             width: 86,
                             color: isPlaying
-                                ? JinxTheme.violetBlue
-                                : JinxTheme.regalBlue,
+                                ? JinxTheme.violetBlue.withValues(alpha: 0.65)
+                                : JinxTheme.brightTurquoise.withValues(
+                                    alpha: 0.7,
+                                  ),
                           ),
                         ),
                         ClipPath(
@@ -434,8 +443,8 @@ class TrackDisplay extends StatelessWidget {
                             title,
                             style: TextStyle(
                               color: isPlaying
-                                  ? const Color.fromARGB(255, 252, 240, 251)
-                                  : const Color.fromARGB(255, 216, 255, 248),
+                                  ? const Color.fromARGB(255, 250, 233, 249)
+                                  : const Color.fromARGB(218, 216, 253, 246),
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),

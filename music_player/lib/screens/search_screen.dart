@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:music_player/theme/jinx_style.dart';
 import '../main_widgets/mini_player.dart';
 import '../services/player.dart';
 import '../services/search.dart';
@@ -245,8 +246,8 @@ class _SearchScreenState extends State<SearchScreen> {
             begin: const Alignment(0.0, 0.0),
             end: const Alignment(0.0, 1.6),
             colors: const [
-              Color.fromARGB(255, 23, 19, 31),
-              Color.fromARGB(255, 103, 89, 136),
+              JinxTheme.dark, //Color.fromARGB(255, 23, 19, 31),
+              JinxTheme.darkCold, // Color.fromARGB(255, 103, 89, 136),
             ],
           ),
         ),
@@ -520,7 +521,7 @@ class _TrackTileState extends State<_TrackTile> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isLoading = widget.isLoading;
+    //final bool isLoading = widget.isLoading;
     return FutureBuilder<Color?>(
       future: _colorFuture,
       builder: (context, snapshot) {

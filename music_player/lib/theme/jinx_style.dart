@@ -4,11 +4,13 @@ class JinxTheme {
   static const Color deepCerise = Color.fromARGB(169, 253, 62, 253);
   static const Color brightTurquoise = Color.fromARGB(148, 34, 239, 242);
   static const Color tyrianPurple = Color.fromARGB(255, 131, 7, 110);
-  static const Color regalBlue = Color.fromRGBO(48, 91, 139, 1);
+  static const Color regalBlue = Color.fromRGBO(53, 100, 153, 1);
   static const Color darkWarm = Color.fromARGB(255, 36, 8, 16);
   static const Color darkCold = Color.fromARGB(255, 8, 36, 32);
   static const Color violetBlue = Color.fromARGB(255, 235, 97, 205);
   static const Color midnightExpress = Color.fromARGB(255, 11, 23, 51);
+  static const Color dark = Color.fromARGB(255, 24, 8, 39);
+  static const Color midnightExpressOpposite = Color.fromARGB(255, 36, 8, 32);
 }
 
 class MiniPlayerClipper extends CustomClipper<Path> {
