@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/screens/album_view.dart';
+import '../theme/jinx_style.dart';
 import '../services/player.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '../screens/artist_profile.dart';
@@ -318,7 +319,7 @@ class TrackDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Compare against Deezer ID (set on play) — YouTube video ID is unrelated
-    final bool _isPlaying =
+    final bool isPlaying =
         deezerTrackId != null &&
         playerService.playingDeezerTrackId == deezerTrackId &&
         playerService.currentVideoPlayingFrom == 'search_screen';
@@ -333,96 +334,141 @@ class TrackDisplay extends StatelessWidget {
     return GestureDetector(
       onTap: () => onPlay?.call(),
       child: Container(
-        height: 65,
+        //height: 65,
         padding: EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.95,
-          height: MediaQuery.of(context).size.height * 0.07,
-          padding: EdgeInsets.only(top: 1, bottom: 0, left: 0, right: 8),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: !_isPlaying
-                  ? [darkened!.withValues(alpha: 0.35), Colors.transparent]
-                  : [
-                      const Color.fromARGB(118, 250, 162, 253),
-                      const Color.fromARGB(134, 162, 253, 248),
-                    ],
-              stops: [0.0, 1.5],
-            ),
-            borderRadius: BorderRadius.circular(5),
-            border: Border(
-              bottom: BorderSide(
-                color: _isPlaying
+        child: Stack(
+          children: [
+            Transform.translate(
+              offset: Offset(0, 5),
+              child: ClipPath(
+                clipper: TrackDisplayClipper(offset: 1),
+                child: Container(
+                  height: 51,
+                  color: isPlaying
+                      ? JinxTheme.violetBlue
+                      : JinxTheme.regalBlue /* isPlaying
                     ? Color.fromARGB(255, 159, 135, 161)
-                    : Color.fromARGB(184, 129, 109, 131),
-                width: 1,
+                    : Color.fromARGB(184, 129, 109, 131)*/,
+                ),
               ),
             ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                margin: EdgeInsets.only(top: 0, bottom: 0, left: 1, right: 10),
-                width: 80,
-                height: 65,
+            ClipPath(
+              clipper: TrackDisplayClipper(offset: 10),
+              child: Transform.translate(
+                offset: Offset(12, -1),
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.929,
+                  height: MediaQuery.of(context).size.height * 0.065,
+                  color: isPlaying ? JinxTheme.violetBlue : JinxTheme.regalBlue,
+                ),
+              ),
+            ),
+            ClipPath(
+              clipper: TrackDisplayClipper(),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.95,
+                height: MediaQuery.of(context).size.height * 0.065,
+                padding: EdgeInsets.only(right: 8),
                 decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(5),
-                    topLeft: Radius.circular(5),
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: !isPlaying
+                        ? [
+                            // JinxTheme.midnightExpress.withValues(alpha: 0.8),
+                            darkened?.withValues(alpha: 0.4) ?? Colors.amber,
+                            JinxTheme.midnightExpress.withValues(alpha: 0.85),
+                            //darkened!.withValues(alpha: 0.5), //0.35),
+                            //Colors.transparent,
+                          ]
+                        : [
+                            JinxTheme.brightTurquoise.withValues(
+                              alpha: 0.7,
+                            ), //const Color.fromARGB(118, 250, 162, 253),
+                            JinxTheme.brightTurquoise.withValues(
+                              alpha: 0.35,
+                            ), //const Color.fromARGB(134, 162, 253, 248),
+                          ],
+                    stops: [0, 0.8],
                   ),
                 ),
-                child: CachedNetworkImage(
-                  imageUrl: thumbUrl,
-                  fit: BoxFit.cover,
-                  errorWidget: ((context, url, error) =>
-                      Image.asset('lib/graphics/no_thumbnail_found.jpg')),
-                ),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: 10),
-                    Text(
-                      title,
-                      style: TextStyle(
-                        color: _isPlaying
-                            ? const Color.fromARGB(255, 248, 205, 246)
-                            : const Color.fromARGB(255, 205, 248, 241),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Stack(
+                      children: [
+                        ClipPath(
+                          clipper: TrackDisplayClipper(cover: true, offset: 10),
+                          child: Container(
+                            height: 60,
+                            width: 86,
+                            color: isPlaying
+                                ? JinxTheme.violetBlue
+                                : JinxTheme.regalBlue,
+                          ),
+                        ),
+                        ClipPath(
+                          clipper: TrackDisplayClipper(cover: true),
+                          child: Container(
+                            margin: EdgeInsets.only(right: 10),
+                            width: 85,
+                            height: 60,
+                            child: CachedNetworkImage(
+                              imageUrl: thumbUrl,
+                              fit: BoxFit.cover,
+                              errorWidget: ((context, url, error) =>
+                                  Image.asset(
+                                    'lib/graphics/no_thumbnail_found.jpg',
+                                  )),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 4),
-                    Text(
-                      author,
-                      style: TextStyle(
-                        color: const Color.fromARGB(255, 186, 172, 187),
-                        fontSize: 11,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 8),
+                          Text(
+                            title,
+                            style: TextStyle(
+                              color: isPlaying
+                                  ? const Color.fromARGB(255, 252, 240, 251)
+                                  : const Color.fromARGB(255, 216, 255, 248),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            author,
+                            style: TextStyle(
+                              color: const Color.fromARGB(255, 231, 215, 233),
+                              fontSize: 11,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.fade,
+                          ),
+                        ],
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.fade,
+                    ),
+                    SizedBox(width: 10),
+                    IconButton(
+                      icon: Icon(
+                        Icons.menu_sharp,
+                        color: Color.fromARGB(188, 248, 205, 246),
+                      ),
+                      iconSize: 22,
+                      onPressed: () {},
                     ),
                   ],
                 ),
               ),
-              SizedBox(width: 10),
-              IconButton(
-                icon: Icon(
-                  Icons.menu_sharp,
-                  color: Color.fromARGB(188, 248, 205, 246),
-                ),
-                iconSize: 22,
-                onPressed: () {},
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -56,14 +56,13 @@ class MiniPlayer extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
+                      //Color.fromARGB(255, 15, 20, 20),
+                      (JinxTheme.darkWarm).withValues(alpha: 0.95),
                       (JinxTheme.darkCold).withValues(
-                        alpha: 0.95,
-                      ), //Color.fromARGB(255, 15, 20, 20),
-                      (JinxTheme.darkWarm).withValues(
-                        alpha: 0.95,
+                        alpha: 0.9,
                       ), //Color.fromARGB(255, 34, 28, 46),
                     ],
-                    stops: [0, 1.5],
+                    stops: [0.3, 1.5],
                   ),
                 ),
                 child: Row(

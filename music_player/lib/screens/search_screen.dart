@@ -544,7 +544,7 @@ class _TrackTileState extends State<_TrackTile> {
               darkened: darkened,
               onPlay: widget.onPlay,
             ),
-            if (isLoading)
+            /*if (isLoading)
               Positioned.fill(
                 child: Container(
                   color: const Color.fromARGB(80, 0, 0, 0),
@@ -554,12 +554,12 @@ class _TrackTileState extends State<_TrackTile> {
                       height: 22,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Color.fromARGB(255, 169, 240, 234),
+                        color: Color.fromARGB(255, 141, 228, 221),
                       ),
                     ),
                   ),
                 ),
-              ),
+              ),*/
           ],
         );
       },

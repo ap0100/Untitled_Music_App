@@ -116,7 +116,7 @@ class PlayerService extends ChangeNotifier {
     _currentVideo = video;
     _isBuffering = true;
     _isPlaying = false;
-    _playingDeezerTrackId = video.id.toString();
+    //_playingDeezerTrackId = video.id.toString();
     notifyListeners();
 
     await _player.stop();
