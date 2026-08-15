@@ -50,94 +50,110 @@ class ArtistDisplay extends StatelessWidget {
         _navigateToArtistProfile(context); // Replace 1 with actual artist ID
       },
       child: Container(
-        height: 57,
-        padding: EdgeInsets.only(top: 5, bottom: 5, left: 7, right: 10),
-        margin: EdgeInsets.only(top: 5, bottom: 5, left: 7, right: 10),
-        decoration: BoxDecoration(
-          //color: const Color.fromARGB(255, 23, 19, 31),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(100),
-            bottomLeft: Radius.circular(100),
-            bottomRight: Radius.circular(10),
-            topRight: Radius.circular(10),
-          ),
-          border: Border(
-            bottom: BorderSide(
-              color: const Color.fromARGB(144, 248, 205, 246),
-              width: 1,
-            ),
-          ),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: const [
-              Color.fromARGB(115, 146, 67, 142),
-              Colors.transparent,
-            ],
-            stops: [0.1, 1.5],
-          ),
-        ),
-        child: Row(
-          spacing: 10,
+        padding: EdgeInsets.only(left: 10, right: 10, top: 5),
+        child: Stack(
           children: [
-            Container(
-              height: 46,
-              width: 46,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: const Color.fromARGB(160, 248, 205, 246),
-                  width: 1,
-                ),
-              ),
-              child: ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: thumbnail,
-                  fit: BoxFit.cover,
-                  errorWidget: (context, url, error) => Image.asset(
-                    'lib/graphics/no_thumbnail_found.jpg',
-                    fit: BoxFit.cover,
-                  ),
+            ClipPath(
+              clipper: ArtistDisplayClipper(offset: 10),
+              child: Transform.translate(
+                offset: Offset(13, -1),
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.92,
+                  height: MediaQuery.of(context).size.height * 0.062,
+                  color: JinxTheme.shimmerPink,
                 ),
               ),
             ),
-            Container(
-              width: MediaQuery.of(context).size.width * 0.6,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    name ?? 'Unknown Artist',
-                    style: const TextStyle(
-                      color: Color.fromARGB(228, 243, 205, 248),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Artist',
-                    style: const TextStyle(
-                      color: Color.fromARGB(181, 243, 205, 248),
-                      fontSize: 11,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+            ClipPath(
+              clipper: ArtistDisplayClipper(offset: 1),
+              child: Transform.translate(
+                offset: Offset(0, 2),
+                child: Container(
+                  height: 55,
+                  color: JinxTheme.shimmerPink,
+                  margin: EdgeInsets.only(bottom: 5),
+                ),
               ),
             ),
-            IconButton(
-              padding: EdgeInsets.only(left: 25),
-              icon: const Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              color: const Color.fromARGB(212, 253, 146, 246),
-              onPressed: () {
-                _navigateToArtistProfile(context);
-              },
+            ClipPath(
+              clipper: ArtistDisplayClipper(),
+              child: Container(
+                height: 55,
+                //padding: EdgeInsets.only(top: 5, bottom: 5, left: 7, right: 10),
+                //margin: EdgeInsets.only(top: 5, bottom: 5, left: 7, right: 10),
+                decoration: BoxDecoration(
+                  //color: const Color.fromARGB(255, 23, 19, 31),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      JinxTheme.dark.withValues(alpha: 0.85),
+                      JinxTheme.midnightExpress.withValues(alpha: 0.85),
+                    ],
+                    stops: [0.1, 1.5],
+                  ),
+                ),
+                child: Row(
+                  spacing: 10,
+                  children: [
+                    SizedBox(
+                      height: 46,
+                      width: 46,
+                      child: ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: thumbnail,
+                          fit: BoxFit.cover,
+                          errorWidget: (context, url, error) => Image.asset(
+                            'lib/graphics/no_thumbnail_found.jpg',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            name ?? 'Unknown Artist',
+                            style: const TextStyle(
+                              color: Color.fromARGB(228, 243, 205, 248),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Artist',
+                            style: const TextStyle(
+                              color: Color.fromARGB(181, 243, 205, 248),
+                              fontSize: 11,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      padding: EdgeInsets.only(left: 25),
+                      icon: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 15,
+                      ),
+                      color: const Color.fromARGB(212, 253, 146, 246),
+                      onPressed: () {
+                        _navigateToArtistProfile(context);
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -192,98 +208,130 @@ class AlbumDisplay extends StatelessWidget {
         _navigateToAlbumProfile(context);
       },
       child: Container(
-        height: 55,
-        padding: EdgeInsets.only(top: 6, bottom: 6, left: 7, right: 10),
-        margin: EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 10),
-        decoration: BoxDecoration(
-          //color: const Color.fromARGB(255, 23, 19, 31),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(5),
-            bottomLeft: Radius.circular(5),
-            bottomRight: Radius.circular(5),
-            topRight: Radius.circular(5),
-          ),
-          border: Border(
-            bottom: BorderSide(
-              color: const Color.fromARGB(144, 205, 248, 241),
-              width: 1,
-            ),
-          ),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: const [
-              Color.fromARGB(115, 67, 146, 133),
-              Colors.transparent,
-            ],
-            stops: [0.1, 1.5],
-          ),
-        ),
-        child: Row(
-          spacing: 10,
+        padding: EdgeInsets.only(left: 10, right: 10, top: 5),
+        child: Stack(
           children: [
-            Container(
-              height: 50,
-              width: 45,
-              decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(
-                  color: const Color.fromARGB(160, 205, 248, 241),
-                  width: 1,
-                ),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: CachedNetworkImage(
-                  imageUrl: coverUrl,
-                  fit: BoxFit.cover,
-                  width: 45,
-                  height: 50,
-                  errorWidget: (context, url, error) => Image.asset(
-                    'lib/graphics/no_thumbnail_found.jpg',
-                    fit: BoxFit.cover,
-                  ),
+            ClipPath(
+              clipper: AlbumDisplayClipper(offset: 10),
+              child: Transform.translate(
+                offset: Offset(13, -1),
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.92,
+                  height: MediaQuery.of(context).size.height * 0.062,
+                  color: JinxTheme.turquoiseGreen,
                 ),
               ),
             ),
-            Container(
-              width: MediaQuery.of(context).size.width * 0.6,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    title ?? 'Unknown Album',
-                    style: const TextStyle(
-                      color: Color.fromARGB(227, 205, 248, 239),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Album',
-                    style: const TextStyle(
-                      color: Color.fromARGB(181, 243, 205, 248),
-                      fontSize: 11,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+            ClipPath(
+              clipper: AlbumDisplayClipper(offset: 1),
+              child: Transform.translate(
+                offset: Offset(0, 2),
+                child: Container(
+                  height: 55,
+                  color: JinxTheme.turquoiseGreen,
+                  margin: EdgeInsets.only(bottom: 5),
+                ),
               ),
             ),
-            IconButton(
-              padding: EdgeInsets.only(left: 25),
-              icon: const Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              color: const Color.fromARGB(211, 146, 253, 239),
-              onPressed: () {
-                _navigateToAlbumProfile(context);
-              },
+            ClipPath(
+              clipper: AlbumDisplayClipper(),
+              child: Container(
+                height: 55,
+                //margin: EdgeInsets.only(top: 1, bottom: 5, left: 5, right: 5),
+                decoration: BoxDecoration(
+                  //color: const Color.fromARGB(255, 23, 19, 31),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      JinxTheme.dark.withValues(alpha: 0.85),
+                      JinxTheme.midnightExpress.withValues(alpha: 0.85),
+                    ],
+                    stops: [0.1, 1.5],
+                  ),
+                ),
+                child: Row(
+                  spacing: 10,
+                  children: [
+                    Stack(
+                      children: [
+                        Transform.translate(
+                          offset: Offset(0.8, 0),
+                          child: ClipPath(
+                            clipper: AlbumDisplayClipper(
+                              cover: true,
+                              offset: 1,
+                            ),
+                            child: Container(
+                              height: 55,
+                              width: 65,
+                              color: JinxTheme.turquoiseGreen,
+                            ),
+                          ),
+                        ),
+                        ClipPath(
+                          clipper: AlbumDisplayClipper(cover: true),
+                          child: SizedBox(
+                            height: 55,
+                            width: 65,
+                            child: CachedNetworkImage(
+                              imageUrl: coverUrl,
+                              fit: BoxFit.cover,
+                              width: 45,
+                              height: 50,
+                              errorWidget: (context, url, error) => Image.asset(
+                                'lib/graphics/no_thumbnail_found.jpg',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            title ?? 'Unknown Album',
+                            style: const TextStyle(
+                              color: Color.fromARGB(227, 205, 248, 239),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Album',
+                            style: const TextStyle(
+                              color: Color.fromARGB(181, 243, 205, 248),
+                              fontSize: 11,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      padding: EdgeInsets.only(left: 5),
+                      icon: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 15,
+                      ),
+                      color: const Color.fromARGB(211, 146, 253, 239),
+                      onPressed: () {
+                        _navigateToAlbumProfile(context);
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -383,8 +431,6 @@ class TrackDisplay extends StatelessWidget {
                               alpha: 0.85,
                             ),
                             JinxTheme.midnightExpress.withValues(alpha: 0.8),
-                            //darkened?.withValues(alpha: 0.85) ?? Colors.amber,
-
                             //darkened!.withValues(alpha: 0.5), //0.35),
                             //Colors.transparent,
                           ]

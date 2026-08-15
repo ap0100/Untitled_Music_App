@@ -38,7 +38,7 @@ class MiniPlayer extends StatelessWidget {
       child: Stack(
         children: [
           ClipPath(
-            clipper: MiniPlayerClipper(offset: 1.5),
+            clipper: MiniPlayerClipper(offset: 1),
             child: Container(
               height: 70,
               color: borderColor.withValues(alpha: 0.9),
@@ -49,9 +49,10 @@ class MiniPlayer extends StatelessWidget {
             child: Transform.translate(
               offset: Offset(0, 5),
               child: Container(
-                padding: EdgeInsets.only(right: 1.2),
+                padding: EdgeInsets.only(right: 1.5),
                 height: 70,
-                decoration: BoxDecoration(
+                color: JinxTheme.dark.withValues(alpha: 1),
+                /*decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -64,7 +65,7 @@ class MiniPlayer extends StatelessWidget {
                     ],
                     stops: [0.3, 1.5],
                   ),
-                ),
+                ),*/
                 child: Row(
                   children: [
                     Stack(
@@ -74,7 +75,7 @@ class MiniPlayer extends StatelessWidget {
                           child: Container(
                             width: 106,
                             height: 60,
-                            color: borderColor.withValues(alpha: 0.9),
+                            color: borderColor.withValues(alpha: 0.95),
                           ),
                         ),
                         ClipPath(
