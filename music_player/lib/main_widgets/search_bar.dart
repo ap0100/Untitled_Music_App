@@ -39,16 +39,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: const Alignment(0.0, 0.2),
-          end: const Alignment(0.0, 1.6),
-          colors: const [
-            Color.fromARGB(255, 9, 12, 12),
-            Color.fromARGB(255, 34, 28, 46),
-          ],
-        ),
-      ),
+
       padding: const EdgeInsets.only(left: 8, right: 8, top: 25, bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -203,3 +203,69 @@ class ArtistDisplayClipper extends DisplayClipper {
     return path;
   }
 }
+
+class filterButtonClipper extends CustomClipper<Path> {
+  final double offset;
+
+  filterButtonClipper({this.offset = 0});
+
+  @override
+  Path getClip(Size size) {
+    final w = size.width;
+    final h = size.height;
+    final path = Path();
+
+    path.lineTo(offset == 0 ? 10 : 4, offset == 0 ? h - 15 : h - 20);
+    path.lineTo(offset == 0 ? 0 : 4, offset == 0 ? h - 38 : h - 43);
+    path.lineTo(offset == 0 ? w - 7 : w - 4, offset == 0 ? h - 45 : h - 38);
+    path.lineTo(offset == 0 ? w - 8 : w - 15, offset == 0 ? h - 12 : h - 8);
+    path.lineTo(offset == 0 ? 10 : 4, offset == 0 ? h - 15 : h - 20);
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => true;
+}
+
+class filterSectionClipper extends CustomClipper<Path> {
+  final double offset;
+
+  filterSectionClipper({this.offset = 0});
+
+  @override
+  Path getClip(Size size) {
+    final w = size.width;
+    final h = size.height;
+    final path = Path();
+
+    if (offset != 0) {
+      path.lineTo(0, h - 50);
+      path.lineTo(w, h - 50);
+      path.lineTo(w, h - 20);
+      path.lineTo(w - 10, h);
+      path.lineTo(350, h - 5);
+      path.lineTo(340, h - 20);
+      path.lineTo(300, h - 4);
+      path.lineTo(200, h - 10);
+      path.lineTo(150, h - 2);
+      path.lineTo(120, h);
+      path.lineTo(100, h - 15);
+      path.lineTo(60, h - 5);
+      path.lineTo(45, h);
+      path.lineTo(38, h);
+      path.lineTo(30, h - 8);
+      path.lineTo(20, h - 10);
+      path.lineTo(17, h - 5);
+      path.lineTo(15, h - 4);
+      path.lineTo(0, h - 10);
+
+      return path;
+    }
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => true;
+}

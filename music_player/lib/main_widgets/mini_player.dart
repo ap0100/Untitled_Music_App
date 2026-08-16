@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:music_player/services/player.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../theme/jinx_style.dart';
@@ -43,7 +42,7 @@ class MiniPlayer extends StatelessWidget {
             clipper: MiniPlayerClipper(offset: 1.3),
             child: Container(
               height: 85,
-              color: borderColor.withValues(alpha: 0.9),
+              color: borderColor.withValues(alpha: 0.8),
             ),
           ),
           ClipPath(
@@ -53,7 +52,7 @@ class MiniPlayer extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.only(right: 1.5),
                 height: 85,
-                color: JinxTheme.dark.withValues(alpha: 1),
+                color: JinxTheme.dark.withValues(alpha: 0.95),
                 /*decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -100,25 +99,25 @@ class MiniPlayer extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(width: 15),
+                    SizedBox(width: 14),
                     Expanded(
                       child: Column(
                         children: [
-                          SizedBox(height: 30),
-                          Padding(
-                            padding: EdgeInsets.only(right: 10),
+                          SizedBox(height: 29),
+                          SizedBox(
                             child: Text(
                               video!.title,
                               style: TextStyle(
-                                color: JinxTheme
-                                    .violetBlue, // const Color.fromARGB(255, 205, 248, 241),
-                                fontSize: 12.5,
+                                color: JinxTheme.shimmerPink.withValues(
+                                  alpha: 1,
+                                ), // const Color.fromARGB(255, 205, 248, 241),
+                                fontSize: 13,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          SizedBox(height: 9),
+                          SizedBox(height: 10),
                           StreamBuilder<Duration>(
                             stream: player.positionStream,
                             builder: (context, snapshot) {
@@ -131,46 +130,27 @@ class MiniPlayer extends StatelessWidget {
                                   return SizedBox(
                                     width: 320,
                                     child: ProgressBar(
-                                      thumbGlowColor: const Color.fromARGB(
-                                        202,
-                                        181,
-                                        169,
-                                        182,
-                                      ).withValues(alpha: 0.5),
+                                      thumbGlowColor: JinxTheme.turquoiseGreen
+                                          .withValues(alpha: 0.5),
                                       barHeight: 1.5,
                                       progress: position,
                                       total: duration,
                                       onSeek: (pos) => player.seek(pos),
-                                      progressBarColor: const Color.fromARGB(
-                                        255,
-                                        156,
-                                        236,
-                                        232,
-                                      ),
-                                      baseBarColor: const Color.fromARGB(
-                                        202,
-                                        181,
-                                        169,
-                                        182,
-                                      ),
-                                      thumbColor: const Color.fromARGB(
-                                        255,
-                                        156,
-                                        236,
-                                        232,
-                                      ),
+                                      progressBarColor: JinxTheme
+                                          .brightTurquoise
+                                          .withValues(alpha: 1),
+                                      baseBarColor: JinxTheme.tyrianPurple
+                                          .withValues(alpha: 1),
+                                      thumbColor: JinxTheme.brightTurquoise
+                                          .withValues(alpha: 1),
                                       timeLabelLocation:
                                           TimeLabelLocation.sides,
                                       timeLabelTextStyle: const TextStyle(
-                                        color: Color.fromARGB(
-                                          255,
-                                          245,
-                                          205,
-                                          248,
-                                        ),
+                                        color: JinxTheme.mainFontColor,
                                         fontSize: 10,
                                       ),
                                       thumbRadius: 3,
+                                      thumbGlowRadius: 12,
                                     ),
                                   );
                                 },

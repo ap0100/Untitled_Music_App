@@ -514,7 +514,7 @@ class TrackDisplay extends StatelessWidget {
                             style: TextStyle(
                               color: isPlaying
                                   ? JinxTheme.tyrianPurple.withValues(
-                                      alpha: 0.6,
+                                      alpha: 0.8,
                                     )
                                   : JinxTheme.mainFontColor,
                               fontSize: 13,
@@ -533,7 +533,7 @@ class TrackDisplay extends StatelessWidget {
                                       145,
                                       30,
                                       116,
-                                    ).withValues(alpha: 0.85)
+                                    ).withValues(alpha: 0.95)
                                   : JinxTheme.brightTurquoise.withValues(
                                       alpha: 1,
                                     ),

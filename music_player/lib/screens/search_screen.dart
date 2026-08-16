@@ -226,6 +226,82 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  Widget _buildFilterButton({
+    required String label,
+    required bool isActive,
+    required bool isLoading,
+    required VoidCallback onTap,
+    required Color color,
+    double h = 50,
+    double w = 65,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(2),
+      child: Stack(
+        children: [
+          ClipPath(
+            clipper: filterButtonClipper(offset: 1),
+            child: Container(
+              height: h,
+              width: w,
+              color: isActive
+                  ? JinxTheme.shimmerPink.withValues(alpha: 0.8)
+                  : JinxTheme.tyrianPurple.withValues(alpha: 0.8),
+            ),
+          ),
+          ClipPath(
+            clipper: filterButtonClipper(),
+            child: Container(
+              height: h,
+              width: w,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: isActive
+                    ? color
+                    : JinxTheme.regalBlue.withValues(alpha: 0.56),
+                borderRadius: BorderRadius.circular(2.5),
+                border: const Border(
+                  bottom: BorderSide(
+                    color: Color.fromARGB(255, 40, 163, 163),
+                    width: 0.7,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4, bottom: 4),
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        color: isActive
+                            ? JinxTheme.tyrianPurple.withValues(alpha: 0.75)
+                            : JinxTheme.shimmerPink.withValues(alpha: 0.8),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                  if (isLoading && isActive) ...[
+                    const SizedBox(width: 7),
+                    const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 1,
+                        color: JinxTheme.tyrianPurple,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final allResults = _searchService.searchResults;
@@ -264,167 +340,78 @@ class _SearchScreenState extends State<SearchScreen> {
                   onSubmitted: _search,
                 ),
                 Container(
-                  color: Colors.transparent,
-                  height: 45,
-                  padding: EdgeInsets.only(left: 8, bottom: 10),
-                  child: Row(
-                    children: [
-                      InkWell(
-                        onTap: () => _toggleArtists(),
-                        borderRadius: BorderRadius.circular(2),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _showArtists
-                                ? Color.fromARGB(255, 83, 52, 87)
-                                : Color.fromARGB(255, 44, 28, 46),
-                            borderRadius: BorderRadius.circular(2.5),
-                            border: const Border(
-                              bottom: BorderSide(
-                                color: Color.fromARGB(255, 40, 163, 163),
-                                width: 0.7,
-                              ),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Artists',
-                                style: TextStyle(
-                                  color: const Color.fromARGB(
-                                    255,
-                                    243,
-                                    190,
-                                    239,
-                                  ),
-                                  fontSize: 13,
-                                ),
-                              ),
-                              if (artistsLoading && _showArtists) ...[
-                                const SizedBox(width: 7),
-                                const SizedBox(
-                                  width: 14,
-                                  height: 14,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 1,
-                                    color: Color.fromARGB(255, 169, 240, 234),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
+                  padding: EdgeInsets.only(left: 8),
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Row(
+                      children: [
+                        _buildFilterButton(
+                          label: "Artists",
+                          isActive: _showArtists,
+                          isLoading: artistsLoading,
+                          onTap: _toggleArtists,
+                          color: JinxTheme.yellowish,
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      InkWell(
-                        onTap: () => _toggleAlbums(),
-                        borderRadius: BorderRadius.circular(2),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _showAlbums
-                                ? Color.fromARGB(255, 83, 52, 87)
-                                : Color.fromARGB(255, 44, 28, 46),
-                            borderRadius: BorderRadius.circular(2.5),
-                            border: const Border(
-                              bottom: BorderSide(
-                                color: Color.fromARGB(255, 40, 163, 163),
-                                width: 0.7,
-                              ),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Albums',
-                                style: TextStyle(
-                                  color: const Color.fromARGB(
-                                    255,
-                                    243,
-                                    190,
-                                    239,
-                                  ),
-                                  fontSize: 13,
-                                ),
-                              ),
-                              if (albumsLoading && _showAlbums) ...[
-                                const SizedBox(width: 7),
-                                const SizedBox(
-                                  width: 14,
-                                  height: 14,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 1,
-                                    color: Color.fromARGB(255, 169, 240, 234),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
+                        SizedBox(width: 10),
+                        _buildFilterButton(
+                          label: "Albums",
+                          isActive: _showAlbums,
+                          isLoading: albumsLoading,
+                          onTap: _toggleAlbums,
+                          w: 68,
+                          color: JinxTheme.turquoiseGreen,
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      InkWell(
-                        onTap: () => _toggleTracks(),
-                        borderRadius: BorderRadius.circular(2),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _showTracks
-                                ? Color.fromARGB(255, 83, 52, 87)
-                                : Color.fromARGB(255, 44, 28, 46),
-                            borderRadius: BorderRadius.circular(2.5),
-                            border: const Border(
-                              bottom: BorderSide(
-                                color: Color.fromARGB(255, 40, 163, 163),
-                                width: 0.7,
-                              ),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Tracks',
-                                style: TextStyle(
-                                  color: const Color.fromARGB(
-                                    255,
-                                    243,
-                                    190,
-                                    239,
-                                  ),
-                                  fontSize: 13,
-                                ),
-                              ),
-                              if (tracksLoading && _showTracks) ...[
-                                const SizedBox(width: 7),
-                                const SizedBox(
-                                  width: 14,
-                                  height: 14,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 1,
-                                    color: Color.fromARGB(255, 169, 240, 234),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
+                        SizedBox(width: 10),
+                        _buildFilterButton(
+                          label: "Tracks",
+                          isActive: _showTracks,
+                          isLoading: tracksLoading,
+                          onTap: _toggleTracks,
+                          color: const Color.fromARGB(
+                            147,
+                            31,
+                            211,
+                            214,
+                          ).withValues(alpha: 0.66),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 Expanded(
-                  child: GestureDetector(
-                    onTap: () => FocusScope.of(context).unfocus(),
-                    child: _buildResults(),
+                  child: Stack(
+                    children: [
+                      GestureDetector(
+                        onTap: () => FocusScope.of(context).unfocus(),
+                        child: _buildResults(),
+                      ),
+                      // Decorative clipped overlay — floats over the top of results,
+                      // takes zero layout space, scrolls nothing
+                      IgnorePointer(
+                        child: Stack(
+                          children: [
+                            ClipPath(
+                              clipper: filterSectionClipper(offset: 5),
+                              child: Container(
+                                height: 30,
+                                color: JinxTheme.tyrianPurple.withValues(
+                                  alpha: 0.85,
+                                ),
+                              ),
+                            ),
+                            ClipPath(
+                              clipper: filterSectionClipper(),
+                              child: Container(
+                                height: 35,
+                                color: JinxTheme.brightTurquoise.withValues(
+                                  alpha: 0.5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
