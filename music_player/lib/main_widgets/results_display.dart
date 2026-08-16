@@ -60,7 +60,7 @@ class ArtistDisplay extends StatelessWidget {
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.92,
                   height: MediaQuery.of(context).size.height * 0.062,
-                  color: JinxTheme.shimmerPink,
+                  color: JinxTheme.yellowish,
                 ),
               ),
             ),
@@ -70,7 +70,7 @@ class ArtistDisplay extends StatelessWidget {
                 offset: Offset(0, 2),
                 child: Container(
                   height: 55,
-                  color: JinxTheme.shimmerPink,
+                  color: JinxTheme.yellowish,
                   margin: EdgeInsets.only(bottom: 5),
                 ),
               ),
@@ -87,31 +87,47 @@ class ArtistDisplay extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      JinxTheme.dark.withValues(alpha: 0.85),
+                      JinxTheme.dark.withValues(alpha: 0.815),
                       JinxTheme.midnightExpress.withValues(alpha: 0.85),
                     ],
-                    stops: [0.1, 1.5],
+                    stops: [0, 1.5],
                   ),
                 ),
                 child: Row(
                   spacing: 10,
                   children: [
-                    SizedBox(
-                      height: 46,
-                      width: 46,
-                      child: ClipOval(
-                        child: CachedNetworkImage(
-                          imageUrl: thumbnail,
-                          fit: BoxFit.cover,
-                          errorWidget: (context, url, error) => Image.asset(
-                            'lib/graphics/no_thumbnail_found.jpg',
-                            fit: BoxFit.cover,
+                    Stack(
+                      children: [
+                        ClipPath(
+                          clipper: ArtistDisplayClipper(
+                            cover: true,
+                            offset: 1.5,
+                          ),
+                          child: Container(
+                            height: 55,
+                            width: 70,
+                            color: JinxTheme.yellowish,
                           ),
                         ),
-                      ),
+                        ClipPath(
+                          clipper: ArtistDisplayClipper(cover: true),
+                          child: SizedBox(
+                            height: 55,
+                            width: 70,
+                            child: CachedNetworkImage(
+                              imageUrl: thumbnail,
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) => Image.asset(
+                                'lib/graphics/no_thumbnail_found.jpg',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.6,
+                      width: MediaQuery.of(context).size.width * 0.53,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -120,7 +136,7 @@ class ArtistDisplay extends StatelessWidget {
                           Text(
                             name ?? 'Unknown Artist',
                             style: const TextStyle(
-                              color: Color.fromARGB(228, 243, 205, 248),
+                              color: JinxTheme.mainFontColor,
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
@@ -131,7 +147,7 @@ class ArtistDisplay extends StatelessWidget {
                           Text(
                             'Artist',
                             style: const TextStyle(
-                              color: Color.fromARGB(181, 243, 205, 248),
+                              color: JinxTheme.yellowish,
                               fontSize: 11,
                             ),
                             maxLines: 1,
@@ -146,7 +162,7 @@ class ArtistDisplay extends StatelessWidget {
                         Icons.arrow_forward_ios_rounded,
                         size: 15,
                       ),
-                      color: const Color.fromARGB(212, 253, 146, 246),
+                      color: JinxTheme.yellowish,
                       onPressed: () {
                         _navigateToArtistProfile(context);
                       },
@@ -244,10 +260,12 @@ class AlbumDisplay extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      JinxTheme.dark.withValues(alpha: 0.85),
+                      JinxTheme.midnightExpressOpposite.withValues(
+                        alpha: 0.815,
+                      ),
                       JinxTheme.midnightExpress.withValues(alpha: 0.85),
                     ],
-                    stops: [0.1, 1.5],
+                    stops: [0.2, 1.5],
                   ),
                 ),
                 child: Row(
@@ -264,7 +282,7 @@ class AlbumDisplay extends StatelessWidget {
                             ),
                             child: Container(
                               height: 55,
-                              width: 65,
+                              width: 70,
                               color: JinxTheme.turquoiseGreen,
                             ),
                           ),
@@ -273,12 +291,10 @@ class AlbumDisplay extends StatelessWidget {
                           clipper: AlbumDisplayClipper(cover: true),
                           child: SizedBox(
                             height: 55,
-                            width: 65,
+                            width: 70,
                             child: CachedNetworkImage(
                               imageUrl: coverUrl,
                               fit: BoxFit.cover,
-                              width: 45,
-                              height: 50,
                               errorWidget: (context, url, error) => Image.asset(
                                 'lib/graphics/no_thumbnail_found.jpg',
                                 fit: BoxFit.cover,
@@ -289,7 +305,7 @@ class AlbumDisplay extends StatelessWidget {
                       ],
                     ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.6,
+                      width: MediaQuery.of(context).size.width * 0.55,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -298,7 +314,7 @@ class AlbumDisplay extends StatelessWidget {
                           Text(
                             title ?? 'Unknown Album',
                             style: const TextStyle(
-                              color: Color.fromARGB(227, 205, 248, 239),
+                              color: JinxTheme.mainFontColor,
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
@@ -309,7 +325,7 @@ class AlbumDisplay extends StatelessWidget {
                           Text(
                             'Album',
                             style: const TextStyle(
-                              color: Color.fromARGB(181, 243, 205, 248),
+                              color: JinxTheme.turquoiseGreen,
                               fontSize: 11,
                             ),
                             maxLines: 1,
@@ -319,12 +335,12 @@ class AlbumDisplay extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      padding: EdgeInsets.only(left: 5),
+                      padding: EdgeInsets.only(left: 2.2),
                       icon: const Icon(
                         Icons.arrow_forward_ios_rounded,
                         size: 15,
                       ),
-                      color: const Color.fromARGB(211, 146, 253, 239),
+                      color: JinxTheme.turquoiseGreen,
                       onPressed: () {
                         _navigateToAlbumProfile(context);
                       },
@@ -393,7 +409,7 @@ class TrackDisplay extends StatelessWidget {
                 child: Container(
                   height: 51,
                   color: isPlaying
-                      ? JinxTheme.violetBlue.withValues(alpha: 0.55)
+                      ? JinxTheme.violetBlue.withValues(alpha: 0.75)
                       : JinxTheme.brightTurquoise.withValues(
                           alpha: 0.7,
                         ) /* isPlaying
@@ -410,8 +426,8 @@ class TrackDisplay extends StatelessWidget {
                   width: MediaQuery.of(context).size.width * 0.927,
                   height: MediaQuery.of(context).size.height * 0.062,
                   color: isPlaying
-                      ? JinxTheme.violetBlue.withValues(alpha: 0.65)
-                      : JinxTheme.brightTurquoise.withValues(alpha: 0.7),
+                      ? JinxTheme.shimmerPink.withValues(alpha: 0.9)
+                      : JinxTheme.brightTurquoise.withValues(alpha: 0.75),
                 ),
               ),
             ),
@@ -435,11 +451,11 @@ class TrackDisplay extends StatelessWidget {
                             //Colors.transparent,
                           ]
                         : [
-                            JinxTheme.brightTurquoise.withValues(
-                              alpha: 0.5,
+                            const Color.fromARGB(146, 5, 216, 219).withValues(
+                              alpha: 0.55,
                             ), //const Color.fromARGB(118, 250, 162, 253),
                             JinxTheme.brightTurquoise.withValues(
-                              alpha: 0.35,
+                              alpha: 0.45,
                             ), //const Color.fromARGB(134, 162, 253, 248),
                           ],
                     stops: [0.35, 1.5],
@@ -450,16 +466,24 @@ class TrackDisplay extends StatelessWidget {
                   children: [
                     Stack(
                       children: [
-                        ClipPath(
-                          clipper: TrackDisplayClipper(cover: true, offset: 10),
-                          child: Container(
-                            height: 60,
-                            width: 86,
-                            color: isPlaying
-                                ? JinxTheme.violetBlue.withValues(alpha: 0.65)
-                                : JinxTheme.brightTurquoise.withValues(
-                                    alpha: 0.7,
-                                  ),
+                        Transform.translate(
+                          offset: Offset(4.5, 0.2),
+                          child: ClipPath(
+                            clipper: TrackDisplayClipper(
+                              cover: true,
+                              offset: 2,
+                            ),
+                            child: Container(
+                              width: 90,
+                              height: 65,
+                              color: isPlaying
+                                  ? JinxTheme.shimmerPink.withValues(
+                                      alpha: 0.78,
+                                    )
+                                  : JinxTheme.brightTurquoise.withValues(
+                                      alpha: 0.7,
+                                    ),
+                            ),
                           ),
                         ),
                         ClipPath(
@@ -484,25 +508,39 @@ class TrackDisplay extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 8),
+                          SizedBox(height: 9),
                           Text(
                             title,
                             style: TextStyle(
                               color: isPlaying
-                                  ? const Color.fromARGB(255, 250, 233, 249)
-                                  : const Color.fromARGB(218, 216, 253, 246),
+                                  ? JinxTheme.tyrianPurple.withValues(
+                                      alpha: 0.6,
+                                    )
+                                  : JinxTheme.mainFontColor,
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          SizedBox(height: 4),
+                          SizedBox(height: 2),
                           Text(
                             author,
                             style: TextStyle(
-                              color: const Color.fromARGB(255, 231, 215, 233),
+                              color: isPlaying
+                                  ? const Color.fromARGB(
+                                      255,
+                                      145,
+                                      30,
+                                      116,
+                                    ).withValues(alpha: 0.8)
+                                  : JinxTheme.brightTurquoise.withValues(
+                                      alpha: 1,
+                                    ),
                               fontSize: 11,
+                              /*fontWeight: isPlaying
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,*/
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.fade,
@@ -514,9 +552,11 @@ class TrackDisplay extends StatelessWidget {
                     IconButton(
                       icon: Icon(
                         Icons.menu_sharp,
-                        color: Color.fromARGB(188, 248, 205, 246),
+                        color: isPlaying
+                            ? JinxTheme.tyrianPurple.withValues(alpha: 0.6)
+                            : JinxTheme.shimmerPink.withValues(alpha: 0.7),
                       ),
-                      iconSize: 22,
+                      iconSize: 20,
                       onPressed: () {},
                     ),
                   ],
