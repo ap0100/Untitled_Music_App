@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/jinx_style.dart';
 
 class SearchBarWidget extends StatefulWidget {
   final TextEditingController controller;
@@ -37,79 +38,96 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-
-      padding: const EdgeInsets.only(left: 8, right: 8, top: 25, bottom: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 25),
-          const Text(
-            'Music App',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 153, 233, 222),
-            ),
+    return Stack(
+      children: [
+        Container(
+          color: _focusNode.hasFocus
+              ? JinxTheme.tyrianPurple.withValues(alpha: 0.95)
+              : JinxTheme.brightTurquoise.withValues(alpha: 0.7),
+          height: 156,
+        ),
+        Container(
+          width: double.infinity,
+          color: JinxTheme.dark.withValues(alpha: 0.95),
+          padding: const EdgeInsets.only(
+            left: 8,
+            right: 8,
+            top: 25,
+            bottom: 10,
           ),
-          const Text(
-            'no ads, no premium, just music --- developed by ap0100',
-            style: TextStyle(
-              fontSize: 13,
-              color: Color.fromARGB(255, 232, 173, 240),
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-          const SizedBox(height: 15),
-          SizedBox(
-            height: 40,
-            child: TextField(
-              focusNode: _focusNode,
-              controller: widget.controller,
-              cursorColor: const Color.fromARGB(255, 40, 163, 163),
-              onSubmitted: widget.onSubmitted,
-              textAlign: TextAlign.left,
-              style: const TextStyle(
-                color: Color.fromARGB(255, 173, 240, 215),
-                fontSize: 15,
-              ),
-              decoration: InputDecoration(
-                isDense: true,
-                counterText: '',
-                hintText: 'Search song, artist...',
-                hintStyle: const TextStyle(
-                  color: Color.fromARGB(255, 40, 94, 90),
-                  fontSize: 15,
-                ),
-                prefixIcon: GestureDetector(
-                  onTap: () => widget.onSearch(widget.controller.text),
-                  child: const Icon(
-                    Icons.search_sharp,
-                    color: Color.fromARGB(255, 219, 86, 190),
-                    size: 25,
-                  ),
-                ),
-                filled: true,
-                fillColor: const Color.fromARGB(255, 44, 28, 46),
-                contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                enabledBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Color.fromARGB(255, 40, 163, 163),
-                    width: 1.2,
-                  ),
-                ),
-                focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Color.fromARGB(255, 216, 71, 221),
-                    width: 1.0,
-                  ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 25),
+              Text(
+                'Music App',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: JinxTheme.mainFontColor.withValues(alpha: 0.8),
                 ),
               ),
-            ),
+              Text(
+                'no ads, no premium, just music --- developed by ap0100',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: JinxTheme.mainFontColor.withValues(alpha: 0.7),
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+              const SizedBox(height: 15),
+              SizedBox(
+                height: 40,
+                child: TextField(
+                  focusNode: _focusNode,
+                  controller: widget.controller,
+                  cursorColor: JinxTheme.turquoiseGreen,
+                  onSubmitted: widget.onSubmitted,
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(
+                    color: JinxTheme.mainFontColor,
+                    fontSize: 15,
+                  ),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    counterText: '',
+                    hintText: 'Search song, artist...',
+                    hintStyle: TextStyle(
+                      color: JinxTheme.tyrianPurple.withValues(alpha: 0.8),
+                      fontSize: 15,
+                    ),
+                    prefixIcon: GestureDetector(
+                      onTap: () => widget.onSearch(widget.controller.text),
+                      child: const Icon(
+                        Icons.search_sharp,
+                        color: JinxTheme.deepCerise,
+                        size: 25,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: JinxTheme.darkCold.withValues(
+                      alpha: 0.4,
+                    ), // const Color.fromARGB(255, 44, 28, 46),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: JinxTheme.brightTurquoise.withValues(alpha: 0.8),
+                        width: 1.2,
+                      ),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: JinxTheme.shimmerPink.withValues(alpha: 0.8),
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

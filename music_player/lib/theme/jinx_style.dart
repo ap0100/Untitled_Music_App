@@ -206,8 +206,9 @@ class ArtistDisplayClipper extends DisplayClipper {
 
 class filterButtonClipper extends CustomClipper<Path> {
   final double offset;
+  final String type;
 
-  filterButtonClipper({this.offset = 0});
+  filterButtonClipper({this.offset = 0, this.type = ''});
 
   @override
   Path getClip(Size size) {
@@ -215,11 +216,25 @@ class filterButtonClipper extends CustomClipper<Path> {
     final h = size.height;
     final path = Path();
 
-    path.lineTo(offset == 0 ? 10 : 4, offset == 0 ? h - 15 : h - 20);
-    path.lineTo(offset == 0 ? 0 : 4, offset == 0 ? h - 38 : h - 43);
-    path.lineTo(offset == 0 ? w - 7 : w - 4, offset == 0 ? h - 45 : h - 38);
-    path.lineTo(offset == 0 ? w - 8 : w - 15, offset == 0 ? h - 12 : h - 8);
-    path.lineTo(offset == 0 ? 10 : 4, offset == 0 ? h - 15 : h - 20);
+    if (type == 'artists_btn') {
+      path.lineTo(offset == 0 ? 10 : 5, offset == 0 ? h - 16 : h - 20);
+      path.lineTo(offset == 0 ? 0 : 4, offset == 0 ? h - 38 : h - 43);
+      path.lineTo(offset == 0 ? w - 7 : w - 4, offset == 0 ? h - 45 : h - 38);
+      path.lineTo(offset == 0 ? w - 7 : w - 15, offset == 0 ? h - 12 : h - 8);
+      path.lineTo(offset == 0 ? 10 : 5, offset == 0 ? h - 16 : h - 20);
+    } else if (type == 'albums_btn') {
+      path.lineTo(offset == 0 ? 3 : 9, offset == 0 ? h - 15 : h - 18);
+      path.lineTo(offset == 0 ? 10 : 4, offset == 0 ? h - 40 : h - 43);
+      path.lineTo(offset == 0 ? w - 12 : w - 4, offset == 0 ? h - 47 : h - 40);
+      path.lineTo(offset == 0 ? w - 6 : w - 15, offset == 0 ? h - 15 : h - 9);
+      path.lineTo(offset == 0 ? 3 : 9, offset == 0 ? h - 15 : h - 18);
+    } else {
+      path.lineTo(offset == 0 ? 2 : 7, offset == 0 ? h - 20 : h - 12);
+      path.lineTo(offset == 0 ? 10 : 4, offset == 0 ? h - 48 : h - 44);
+      path.lineTo(offset == 0 ? w - 10 : w - 4, offset == 0 ? h - 41 : h - 40);
+      path.lineTo(offset == 0 ? w - 8 : w - 15, offset == 0 ? h - 8 : h - 15);
+      path.lineTo(offset == 0 ? 2 : 7, offset == 0 ? h - 20 : h - 12);
+    }
 
     return path;
   }
@@ -239,29 +254,25 @@ class filterSectionClipper extends CustomClipper<Path> {
     final h = size.height;
     final path = Path();
 
-    if (offset != 0) {
-      path.lineTo(0, h - 50);
-      path.lineTo(w, h - 50);
-      path.lineTo(w, h - 20);
-      path.lineTo(w - 10, h);
-      path.lineTo(350, h - 5);
-      path.lineTo(340, h - 20);
-      path.lineTo(300, h - 4);
-      path.lineTo(200, h - 10);
-      path.lineTo(150, h - 2);
-      path.lineTo(120, h);
-      path.lineTo(100, h - 15);
-      path.lineTo(60, h - 5);
-      path.lineTo(45, h);
-      path.lineTo(38, h);
-      path.lineTo(30, h - 8);
-      path.lineTo(20, h - 10);
-      path.lineTo(17, h - 5);
-      path.lineTo(15, h - 4);
-      path.lineTo(0, h - 10);
-
-      return path;
-    }
+    path.lineTo(0, h - 50 - offset);
+    path.lineTo(w, h - 50 - offset);
+    path.lineTo(w, h - 20 - offset);
+    path.lineTo(w - 10, h - offset);
+    path.lineTo(350, h - 5 - (offset + 1));
+    path.lineTo(340, h - 20 - offset + (offset == 0 ? 0 : 1));
+    path.lineTo(300 - offset, h - 4 - offset + (offset == 0 ? 0 : -1.2));
+    path.lineTo(200, h - 10 - offset + (offset == 0 ? 0 : 2));
+    path.lineTo(150 - offset, h - 2 - (offset - 3));
+    path.lineTo(120, h - offset + 2);
+    path.lineTo(100 - offset, h - 15 - (offset + 2));
+    path.lineTo(60, h - 5 - offset);
+    path.lineTo(45 + offset, h - (offset + 1.5));
+    path.lineTo(38 - offset, h - offset);
+    path.lineTo(30, h - 8 - offset);
+    path.lineTo(20, h - 10 - offset + 3);
+    path.lineTo(17, h - 5 - offset);
+    path.lineTo(15 - offset, h - 4 - offset);
+    path.lineTo(0, h - 10 - offset);
 
     return path;
   }

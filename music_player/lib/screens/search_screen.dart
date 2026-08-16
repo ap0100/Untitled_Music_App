@@ -232,6 +232,7 @@ class _SearchScreenState extends State<SearchScreen> {
     required bool isLoading,
     required VoidCallback onTap,
     required Color color,
+    required String type,
     double h = 50,
     double w = 65,
   }) {
@@ -241,7 +242,7 @@ class _SearchScreenState extends State<SearchScreen> {
       child: Stack(
         children: [
           ClipPath(
-            clipper: filterButtonClipper(offset: 1),
+            clipper: filterButtonClipper(type: type, offset: 1),
             child: Container(
               height: h,
               width: w,
@@ -251,7 +252,7 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ),
           ClipPath(
-            clipper: filterButtonClipper(),
+            clipper: filterButtonClipper(type: type),
             child: Container(
               height: h,
               width: w,
@@ -339,44 +340,59 @@ class _SearchScreenState extends State<SearchScreen> {
                   onSearch: _search,
                   onSubmitted: _search,
                 ),
-                Container(
-                  padding: EdgeInsets.only(left: 8),
-                  child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Row(
-                      children: [
-                        _buildFilterButton(
-                          label: "Artists",
-                          isActive: _showArtists,
-                          isLoading: artistsLoading,
-                          onTap: _toggleArtists,
-                          color: JinxTheme.yellowish,
-                        ),
-                        SizedBox(width: 10),
-                        _buildFilterButton(
-                          label: "Albums",
-                          isActive: _showAlbums,
-                          isLoading: albumsLoading,
-                          onTap: _toggleAlbums,
-                          w: 68,
-                          color: JinxTheme.turquoiseGreen,
-                        ),
-                        SizedBox(width: 10),
-                        _buildFilterButton(
-                          label: "Tracks",
-                          isActive: _showTracks,
-                          isLoading: tracksLoading,
-                          onTap: _toggleTracks,
-                          color: const Color.fromARGB(
-                            147,
-                            31,
-                            211,
-                            214,
-                          ).withValues(alpha: 0.66),
-                        ),
-                      ],
+                Stack(
+                  children: [
+                    Container(
+                      color: _isSearchFocused
+                          ? JinxTheme.tyrianPurple.withValues(alpha: 0.95)
+                          : JinxTheme.brightTurquoise.withValues(alpha: 0.7),
+                      height: 50,
                     ),
-                  ),
+                    Container(
+                      padding: EdgeInsets.only(left: 8),
+                      color: JinxTheme.dark.withValues(alpha: 0.95),
+                      height: 50,
+                      child: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Row(
+                          children: [
+                            _buildFilterButton(
+                              label: "Artists",
+                              isActive: _showArtists,
+                              isLoading: artistsLoading,
+                              onTap: _toggleArtists,
+                              color: JinxTheme.yellowish,
+                              type: 'artists_btn',
+                            ),
+                            SizedBox(width: 10),
+                            _buildFilterButton(
+                              label: "Albums",
+                              isActive: _showAlbums,
+                              isLoading: albumsLoading,
+                              onTap: _toggleAlbums,
+                              w: 68,
+                              color: JinxTheme.turquoiseGreen,
+                              type: 'albums_btn',
+                            ),
+                            SizedBox(width: 10),
+                            _buildFilterButton(
+                              label: "Tracks",
+                              isActive: _showTracks,
+                              isLoading: tracksLoading,
+                              onTap: _toggleTracks,
+                              color: const Color.fromARGB(
+                                147,
+                                31,
+                                211,
+                                214,
+                              ).withValues(alpha: 0.66),
+                              type: 'tracks_btn',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 Expanded(
                   child: Stack(
@@ -387,28 +403,33 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       // Decorative clipped overlay — floats over the top of results,
                       // takes zero layout space, scrolls nothing
-                      IgnorePointer(
-                        child: Stack(
-                          children: [
-                            ClipPath(
-                              clipper: filterSectionClipper(offset: 5),
-                              child: Container(
-                                height: 30,
-                                color: JinxTheme.tyrianPurple.withValues(
-                                  alpha: 0.85,
+                      Transform.translate(
+                        offset: Offset(0, -8),
+                        child: IgnorePointer(
+                          child: Stack(
+                            children: [
+                              ClipPath(
+                                clipper: filterSectionClipper(),
+                                child: Container(
+                                  height: 30,
+                                  color: _isSearchFocused
+                                      ? JinxTheme.tyrianPurple.withValues(
+                                          alpha: 0.95,
+                                        )
+                                      : JinxTheme.brightTurquoise.withValues(
+                                          alpha: 0.7,
+                                        ),
                                 ),
                               ),
-                            ),
-                            ClipPath(
-                              clipper: filterSectionClipper(),
-                              child: Container(
-                                height: 35,
-                                color: JinxTheme.brightTurquoise.withValues(
-                                  alpha: 0.5,
+                              ClipPath(
+                                clipper: filterSectionClipper(offset: 3),
+                                child: Container(
+                                  height: 30,
+                                  color: JinxTheme.dark.withValues(alpha: 0.95),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ],
