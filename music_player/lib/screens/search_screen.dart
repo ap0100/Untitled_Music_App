@@ -273,27 +273,30 @@ class _SearchScreenState extends State<SearchScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 4, bottom: 4),
-                    child: Text(
-                      label,
-                      style: TextStyle(
-                        color: isActive
-                            ? JinxTheme.tyrianPurple.withValues(alpha: 0.75)
-                            : JinxTheme.shimmerPink.withValues(alpha: 0.8),
-                        fontSize: 13,
-                      ),
-                    ),
+                    child: isLoading && isActive
+                        ? Container(
+                            margin: EdgeInsets.only(left: 10),
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 1.5,
+                              color: JinxTheme.tyrianPurple,
+                            ),
+                          )
+                        : Text(
+                            label,
+                            style: TextStyle(
+                              color: isActive
+                                  ? JinxTheme.tyrianPurple.withValues(
+                                      alpha: 0.75,
+                                    )
+                                  : JinxTheme.shimmerPink.withValues(
+                                      alpha: 0.8,
+                                    ),
+                              fontSize: 13,
+                            ),
+                          ),
                   ),
-                  if (isLoading && isActive) ...[
-                    const SizedBox(width: 7),
-                    const SizedBox(
-                      width: 14,
-                      height: 14,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 1,
-                        color: JinxTheme.tyrianPurple,
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),
