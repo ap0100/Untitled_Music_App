@@ -452,13 +452,13 @@ class TrackDisplay extends StatelessWidget {
                           ]
                         : [
                             const Color.fromARGB(146, 5, 216, 219).withValues(
-                              alpha: 0.55,
+                              alpha: 0.6,
                             ), //const Color.fromARGB(118, 250, 162, 253),
                             JinxTheme.brightTurquoise.withValues(
-                              alpha: 0.45,
+                              alpha: 0.35,
                             ), //const Color.fromARGB(134, 162, 253, 248),
                           ],
-                    stops: [0.35, 1.5],
+                    stops: [0, 1.5],
                   ),
                 ),
                 child: Row(
@@ -533,7 +533,7 @@ class TrackDisplay extends StatelessWidget {
                                       145,
                                       30,
                                       116,
-                                    ).withValues(alpha: 0.8)
+                                    ).withValues(alpha: 0.85)
                                   : JinxTheme.brightTurquoise.withValues(
                                       alpha: 1,
                                     ),

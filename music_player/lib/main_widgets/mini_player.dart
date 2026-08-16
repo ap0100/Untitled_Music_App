@@ -13,9 +13,8 @@ class MiniPlayer extends StatelessWidget {
   final Color? darkened;
   final bool searchFocused;
   final bool artistProfileFocused;
-  final PlayerService playerService = PlayerService();
 
-  MiniPlayer({
+  const MiniPlayer({
     super.key,
     required this.player,
     required this.video,
@@ -121,11 +120,11 @@ class MiniPlayer extends StatelessWidget {
                           ),
                           SizedBox(height: 9),
                           StreamBuilder<Duration>(
-                            stream: playerService.player.positionStream,
+                            stream: player.positionStream,
                             builder: (context, snapshot) {
                               final position = snapshot.data ?? Duration.zero;
                               return StreamBuilder<Duration?>(
-                                stream: playerService.player.durationStream,
+                                stream: player.durationStream,
                                 builder: (context, snapDuration) {
                                   final duration =
                                       snapDuration.data ?? Duration.zero;
@@ -141,8 +140,7 @@ class MiniPlayer extends StatelessWidget {
                                       barHeight: 1.5,
                                       progress: position,
                                       total: duration,
-                                      onSeek: (pos) =>
-                                          playerService.player.seek(pos),
+                                      onSeek: (pos) => player.seek(pos),
                                       progressBarColor: const Color.fromARGB(
                                         255,
                                         156,

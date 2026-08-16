@@ -31,12 +31,27 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
   String _currentLyrics = '';
   bool _showLyrics = false;
 
+  Duration _currentPosition = Duration.zero;
+  Duration _currentDuration = Duration.zero;
+
   @override
   void initState() {
     super.initState();
     widget.queueNotifier.addListener(_onQueueChanged);
     widget.playerService.addListener(_onVideoChanged);
     _syncIndex();
+    _currentPosition = widget.playerService.player.position;
+    _currentDuration = widget.playerService.player.duration ?? Duration.zero;
+    widget.playerService.player.positionStream.listen((pos) {
+      setState(() {
+        _currentPosition = pos;
+      });
+    });
+    widget.playerService.player.durationStream.listen((dur) {
+      setState(() {
+        _currentDuration = dur ?? Duration.zero;
+      });
+    });
   }
 
   @override
@@ -303,14 +318,15 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                         // ---- Progress bar ----
                         StreamBuilder<Duration>(
                           stream: widget.playerService.player.positionStream,
+                          initialData: widget.playerService.player.position,
                           builder: (context, snapshot) {
-                            final position = snapshot.data ?? Duration.zero;
+                            //final position = snapshot.data ?? Duration.zero;
                             return StreamBuilder<Duration?>(
                               stream:
                                   widget.playerService.player.durationStream,
                               builder: (context, snapDuration) {
-                                final duration =
-                                    snapDuration.data ?? Duration.zero;
+                                /*final duration =
+                                    snapDuration.data ?? Duration.zero;*/
                                 return SizedBox(
                                   width: 320,
                                   child: ProgressBar(
@@ -321,10 +337,14 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                                       182,
                                     ).withValues(alpha: 0.5),
                                     barHeight: 3,
-                                    progress: position,
-                                    total: duration,
-                                    onSeek: (pos) =>
-                                        widget.playerService.player.seek(pos),
+                                    progress: _currentPosition,
+                                    total: _currentDuration,
+                                    onSeek: (pos) {
+                                      widget.playerService.player.seek(pos);
+                                      setState(() {
+                                        _currentPosition = pos;
+                                      });
+                                    },
                                     progressBarColor: const Color.fromARGB(
                                       255,
                                       156,

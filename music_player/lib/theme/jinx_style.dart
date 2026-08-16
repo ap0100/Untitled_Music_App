@@ -31,13 +31,13 @@ class MiniPlayerClipper extends CustomClipper<Path> {
 
     if (cover) {
       path.lineTo(0, h);
-      path.lineTo(0, h - 45);
-      path.lineTo(10, h - 55);
-      path.lineTo(w + offset, h - 80);
-      path.lineTo(w - 12 + offset, h - 35 - offset);
-      path.lineTo(w - 5 + offset, h - 35 - offset);
-      path.lineTo(w - 12 + offset, h - 20 - offset);
-      path.lineTo(w - 5 + offset, h - 20 - offset);
+      path.lineTo(0, h - 55);
+      path.lineTo(10, h - 75);
+      path.lineTo(w + offset, h - 70);
+      path.lineTo(w - 12 + offset, h - 30 - offset);
+      path.lineTo(w - 5 + offset, h - 30 - offset);
+      path.lineTo(w - 12 + offset, h - 17 - offset);
+      path.lineTo(w - 5 + offset, h - 17 - offset);
       path.lineTo(w - 12 + offset, h);
       path.lineTo(0, h);
       path.close();
