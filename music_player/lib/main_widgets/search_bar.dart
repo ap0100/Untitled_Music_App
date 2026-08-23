@@ -106,7 +106,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                     ),
                     filled: true,
                     fillColor: JinxTheme.darkCold.withValues(
-                      alpha: 0.4,
+                      alpha: 0.1,
                     ), // const Color.fromARGB(255, 44, 28, 46),
                     contentPadding: const EdgeInsets.symmetric(vertical: 12),
                     enabledBorder: UnderlineInputBorder(

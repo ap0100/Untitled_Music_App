@@ -246,9 +246,19 @@ class _SearchScreenState extends State<SearchScreen> {
             child: Container(
               height: h,
               width: w,
-              color: isActive
-                  ? JinxTheme.shimmerPink.withValues(alpha: 0.8)
-                  : JinxTheme.tyrianPurple.withValues(alpha: 0.8),
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  colors: isActive
+                      ? [
+                          JinxTheme.tyrianPurple.withValues(alpha: 0.4),
+                          JinxTheme.shimmerPink.withValues(alpha: 0.8),
+                        ]
+                      : [
+                          JinxTheme.darkWarm.withValues(alpha: 0.6),
+                          JinxTheme.tyrianPurple.withValues(alpha: 0.8),
+                        ],
+                ),
+              ),
             ),
           ),
           ClipPath(
