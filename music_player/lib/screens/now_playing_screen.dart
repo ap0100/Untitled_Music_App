@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide RepeatMode;
+import 'package:music_player/theme/jinx_style.dart';
 import '../services/player.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '../utils/youtube_cleaner.dart';
@@ -30,6 +31,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
   int _currentIndex = 0;
   String _currentLyrics = '';
   bool _showLyrics = false;
+  bool _liked = false;
 
   Duration _currentPosition = Duration.zero;
   Duration _currentDuration = Duration.zero;
@@ -189,315 +191,426 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
       body: Column(
         children: [
           // Artwork + controls
-          Container(
+          SizedBox(
             width: double.infinity,
-            margin: const EdgeInsets.only(left: 10, right: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: const Border(
-                bottom: BorderSide(
-                  color: Color.fromARGB(186, 205, 248, 241),
-                  width: 1.5,
-                ),
-                top: BorderSide(
-                  color: Color.fromARGB(186, 205, 248, 241),
-                  width: 0.5,
-                ),
-              ),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: SizedBox(
-                height: 400,
-                child: Stack(
-                  children: [
-                    // ---- Background image ----
-                    ShaderMask(
-                      shaderCallback: (bounds) {
-                        return const LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Color.fromARGB(255, 27, 17, 26),
-                            Colors.transparent,
-                          ],
-                          stops: [0, 2],
-                        ).createShader(bounds);
-                      },
-                      blendMode: BlendMode.dstIn,
-                      child: Transform.scale(
-                        scaleY: 1.8,
-                        scaleX: 1.2,
-                        //offset: const Offset(0, -50),
-                        child: Opacity(
-                          opacity: 0.5,
-                          child: CachedNetworkImage(
-                            imageUrl:
-                                currentVideo?.thumbnails.highResUrl ??
-                                currentVideo?.thumbnails.standardResUrl ??
-                                '',
-                            fit: BoxFit.fill,
-                            height: double.infinity,
-                            errorWidget: (context, url, error) => Container(
-                              color: const Color.fromARGB(255, 27, 17, 26),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+            height: 400,
+            child: Stack(
+              children: [
+                ClipPath(
+                  clipper: mainPlayerScreen(offset: true, part: 0),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          JinxTheme.shimmerPink.withValues(alpha: 0.85),
 
-                    // ---- Gradient overlay (darkens bottom) ----
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            const Color.fromARGB(
-                              220,
-                              27,
-                              17,
-                              26,
-                            ), // solid dark at bottom
+                          JinxTheme.brightTurquoise.withValues(alpha: 0.8),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                ClipPath(
+                  clipper: mainPlayerScreen(part: 0),
+                  child: Container(
+                    margin: EdgeInsets.only(left: 10, right: 10),
+                    padding: EdgeInsets.only(left: 10, right: 10),
+                    width: double.infinity,
+                    child: ClipRRect(
+                      child: SizedBox(
+                        height: 400,
+                        child: Stack(
+                          children: [
+                            // ---- Background image ----
+                            ShaderMask(
+                              shaderCallback: (bounds) {
+                                return LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    JinxTheme.mainFontColor.withValues(
+                                      alpha: 0.9,
+                                    ), //Color.fromARGB(255, 27, 17, 26),
+                                    Colors.transparent.withValues(alpha: 0.8),
+                                  ],
+                                  //stops: [0, 0.5],
+                                ).createShader(bounds);
+                              },
+                              blendMode: BlendMode.dstIn,
+                              child: Transform.scale(
+                                scaleY: 1.8,
+                                scaleX: 1.2,
+                                //offset: const Offset(0, -50),
+                                child: Opacity(
+                                  opacity: 0.65,
+                                  child: CachedNetworkImage(
+                                    imageUrl:
+                                        currentVideo?.thumbnails.highResUrl ??
+                                        currentVideo
+                                            ?.thumbnails
+                                            .standardResUrl ??
+                                        '',
+                                    fit: BoxFit.fill,
+                                    height: double.infinity,
+                                    errorWidget: (context, url, error) =>
+                                        Container(
+                                          color: const Color.fromARGB(
+                                            255,
+                                            27,
+                                            17,
+                                            26,
+                                          ),
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // ---- Gradient overlay (darkens bottom) ----
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    const Color.fromARGB(
+                                      220,
+                                      27,
+                                      17,
+                                      26,
+                                    ), // solid dark at bottom
+                                  ],
+                                  stops: const [0.0, 1.0],
+                                ),
+                              ),
+                            ),
+                            // ---- Content on top ----
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const SizedBox(height: 25),
+                                SizedBox(
+                                  child: Stack(
+                                    children: [
+                                      ClipPath(
+                                        clipper: mainPlayerScreen(
+                                          offset: true,
+                                          part: 1,
+                                        ),
+                                        child: Container(
+                                          height: 180,
+                                          width: 180,
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                JinxTheme.brightTurquoise
+                                                    .withValues(alpha: 0.65),
+                                                JinxTheme.shimmerPink
+                                                    .withValues(alpha: 0.65),
+                                              ],
+                                              stops: [0, 0.65],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      ClipPath(
+                                        clipper: mainPlayerScreen(part: 1),
+                                        child: Transform.scale(
+                                          scale: 1.35,
+                                          child: CachedNetworkImage(
+                                            height: 170,
+                                            width: 175,
+                                            imageUrl:
+                                                currentVideo
+                                                    ?.thumbnails
+                                                    .highResUrl ??
+                                                currentVideo
+                                                    ?.thumbnails
+                                                    .standardResUrl ??
+                                                '',
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 25),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 20,
+                                    right: 20,
+                                  ),
+                                  child: Text(
+                                    currentVideo?.title ?? 'Unknown title',
+                                    style: const TextStyle(
+                                      color: Color.fromARGB(255, 205, 248, 241),
+                                      fontSize: 17,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  currentVideo?.author ?? 'Unknown artist',
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(255, 186, 172, 187),
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                // ---- Progress bar ----
+                                StreamBuilder<Duration>(
+                                  stream: widget
+                                      .playerService
+                                      .player
+                                      .positionStream,
+                                  initialData:
+                                      widget.playerService.player.position,
+                                  builder: (context, snapshot) {
+                                    //final position = snapshot.data ?? Duration.zero;
+                                    return StreamBuilder<Duration?>(
+                                      stream: widget
+                                          .playerService
+                                          .player
+                                          .durationStream,
+                                      builder: (context, snapDuration) {
+                                        /*final duration =
+                                    snapDuration.data ?? Duration.zero;*/
+                                        return SizedBox(
+                                          width: 300,
+                                          child: ProgressBar(
+                                            thumbGlowColor:
+                                                const Color.fromARGB(
+                                                  202,
+                                                  181,
+                                                  169,
+                                                  182,
+                                                ).withValues(alpha: 0.5),
+                                            barHeight: 3,
+                                            progress: _currentPosition,
+                                            total: _currentDuration,
+                                            onSeek: (pos) {
+                                              widget.playerService.player.seek(
+                                                pos,
+                                              );
+                                              setState(() {
+                                                _currentPosition = pos;
+                                              });
+                                            },
+                                            progressBarColor:
+                                                const Color.fromARGB(
+                                                  255,
+                                                  156,
+                                                  236,
+                                                  232,
+                                                ),
+                                            baseBarColor: const Color.fromARGB(
+                                              202,
+                                              181,
+                                              169,
+                                              182,
+                                            ),
+                                            thumbColor: const Color.fromARGB(
+                                              255,
+                                              156,
+                                              236,
+                                              232,
+                                            ),
+                                            timeLabelLocation:
+                                                TimeLabelLocation.sides,
+                                            timeLabelTextStyle: const TextStyle(
+                                              color: Color.fromARGB(
+                                                255,
+                                                245,
+                                                205,
+                                                248,
+                                              ),
+                                              fontSize: 11,
+                                            ),
+                                            thumbRadius: 4.5,
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: 8),
+                                // ---- Controls ----
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        if (_liked) {
+                                          setState(() => _liked = false);
+                                        } else {
+                                          setState(() => _liked = true);
+                                        }
+                                      },
+                                      padding: const EdgeInsets.only(top: 1),
+                                      icon: Icon(
+                                        _liked
+                                            ? Icons.thumb_up_sharp
+                                            : Icons.thumb_up_alt_outlined,
+                                        size: 21,
+                                        color: Color.fromARGB(
+                                          255,
+                                          236,
+                                          156,
+                                          226,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      icon: Icon(
+                                        _showLyrics
+                                            ? Icons.lyrics_sharp
+                                            : Icons.lyrics_outlined,
+                                        size: 21,
+                                        color: const Color.fromARGB(
+                                          255,
+                                          236,
+                                          156,
+                                          226,
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        if (_showLyrics) {
+                                          setState(() => _showLyrics = false);
+                                        } else {
+                                          _fetchLyrics();
+                                          setState(() => _showLyrics = true);
+                                        }
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.skip_previous,
+                                        size: 26,
+                                        color: Color.fromARGB(
+                                          255,
+                                          236,
+                                          156,
+                                          226,
+                                        ),
+                                      ),
+                                      onPressed: _playPrevious,
+                                    ),
+                                    IconButton(
+                                      icon: StreamBuilder<bool>(
+                                        stream: widget
+                                            .playerService
+                                            .player
+                                            .playerStateStream
+                                            .map((s) => s.playing),
+                                        initialData: false,
+                                        builder: (context, snapshot) {
+                                          return Icon(
+                                            (snapshot.data ?? false)
+                                                ? Icons.pause
+                                                : Icons.play_arrow,
+                                            size: 34,
+                                            color: const Color.fromARGB(
+                                              255,
+                                              236,
+                                              156,
+                                              226,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      onPressed: () {
+                                        widget.playerService.player.playing
+                                            ? widget.playerService.player
+                                                  .pause()
+                                            : widget.playerService.player
+                                                  .play();
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.skip_next,
+                                        size: 26,
+                                        color: Color.fromARGB(
+                                          255,
+                                          236,
+                                          156,
+                                          226,
+                                        ),
+                                      ),
+                                      onPressed: _playNext,
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        widget.playerService.repeatMode ==
+                                                RepeatMode.one
+                                            ? Icons.repeat_one
+                                            : Icons.repeat,
+                                        color: const Color.fromARGB(
+                                          255,
+                                          236,
+                                          156,
+                                          226,
+                                        ),
+                                        size: 21,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          widget.playerService.repeatMode =
+                                              widget.playerService.repeatMode ==
+                                                  RepeatMode.none
+                                              ? RepeatMode.one
+                                              : RepeatMode.none;
+                                          if (widget.playerService.repeatMode ==
+                                                  RepeatMode.none &&
+                                              _showLyrics) {
+                                            _fetchLyrics();
+                                          }
+                                          widget.playerService.player
+                                              .setLoopMode(
+                                                widget
+                                                            .playerService
+                                                            .repeatMode ==
+                                                        RepeatMode.one
+                                                    ? LoopMode.one
+                                                    : LoopMode.off,
+                                              );
+                                        });
+                                      },
+                                    ),
+                                    IconButton(
+                                      onPressed: () {},
+                                      icon: const Icon(
+                                        Icons.playlist_add_outlined,
+                                        size: 26,
+                                        color: Color.fromARGB(
+                                          255,
+                                          236,
+                                          156,
+                                          226,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                              ],
+                            ),
                           ],
-                          stops: const [0.0, 1.0],
                         ),
                       ),
                     ),
-                    // ---- Content on top ----
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 25),
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Color.fromARGB(255, 161, 209, 211),
-                            ),
-                          ),
-                          child: ClipOval(
-                            child: Transform.scale(
-                              scale: 1.35,
-                              child: CachedNetworkImage(
-                                height: 180,
-                                width: 180,
-                                imageUrl:
-                                    currentVideo?.thumbnails.highResUrl ??
-                                    currentVideo?.thumbnails.standardResUrl ??
-                                    '',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 30),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20, right: 20),
-                          child: Text(
-                            currentVideo?.title ?? 'Unknown title',
-                            style: const TextStyle(
-                              color: Color.fromARGB(255, 205, 248, 241),
-                              fontSize: 17,
-                            ),
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          currentVideo?.author ?? 'Unknown artist',
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 186, 172, 187),
-                            fontSize: 15,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        // ---- Progress bar ----
-                        StreamBuilder<Duration>(
-                          stream: widget.playerService.player.positionStream,
-                          initialData: widget.playerService.player.position,
-                          builder: (context, snapshot) {
-                            //final position = snapshot.data ?? Duration.zero;
-                            return StreamBuilder<Duration?>(
-                              stream:
-                                  widget.playerService.player.durationStream,
-                              builder: (context, snapDuration) {
-                                /*final duration =
-                                    snapDuration.data ?? Duration.zero;*/
-                                return SizedBox(
-                                  width: 320,
-                                  child: ProgressBar(
-                                    thumbGlowColor: const Color.fromARGB(
-                                      202,
-                                      181,
-                                      169,
-                                      182,
-                                    ).withValues(alpha: 0.5),
-                                    barHeight: 3,
-                                    progress: _currentPosition,
-                                    total: _currentDuration,
-                                    onSeek: (pos) {
-                                      widget.playerService.player.seek(pos);
-                                      setState(() {
-                                        _currentPosition = pos;
-                                      });
-                                    },
-                                    progressBarColor: const Color.fromARGB(
-                                      255,
-                                      156,
-                                      236,
-                                      232,
-                                    ),
-                                    baseBarColor: const Color.fromARGB(
-                                      202,
-                                      181,
-                                      169,
-                                      182,
-                                    ),
-                                    thumbColor: const Color.fromARGB(
-                                      255,
-                                      156,
-                                      236,
-                                      232,
-                                    ),
-                                    timeLabelLocation: TimeLabelLocation.sides,
-                                    timeLabelTextStyle: const TextStyle(
-                                      color: Color.fromARGB(255, 245, 205, 248),
-                                      fontSize: 12,
-                                    ),
-                                    thumbRadius: 4.5,
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        // ---- Controls ----
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              onPressed: () {},
-                              padding: const EdgeInsets.only(top: 1),
-                              icon: const Icon(
-                                Icons.thumb_up_alt_outlined,
-                                size: 25,
-                                color: Color.fromARGB(255, 236, 156, 226),
-                              ),
-                            ),
-                            IconButton(
-                              padding: const EdgeInsets.only(top: 4),
-                              icon: Icon(
-                                _showLyrics
-                                    ? Icons.lyrics_sharp
-                                    : Icons.lyrics_outlined,
-                                size: 25,
-                                color: const Color.fromARGB(255, 236, 156, 226),
-                              ),
-                              onPressed: () async {
-                                if (_showLyrics) {
-                                  setState(() => _showLyrics = false);
-                                } else {
-                                  _fetchLyrics();
-                                  setState(() => _showLyrics = true);
-                                }
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.skip_previous,
-                                size: 30,
-                                color: Color.fromARGB(255, 236, 156, 226),
-                              ),
-                              onPressed: _playPrevious,
-                            ),
-                            IconButton(
-                              icon: StreamBuilder<bool>(
-                                stream: widget
-                                    .playerService
-                                    .player
-                                    .playerStateStream
-                                    .map((s) => s.playing),
-                                initialData: false,
-                                builder: (context, snapshot) {
-                                  return Icon(
-                                    (snapshot.data ?? false)
-                                        ? Icons.pause
-                                        : Icons.play_arrow,
-                                    size: 38,
-                                    color: const Color.fromARGB(
-                                      255,
-                                      236,
-                                      156,
-                                      226,
-                                    ),
-                                  );
-                                },
-                              ),
-                              onPressed: () {
-                                widget.playerService.player.playing
-                                    ? widget.playerService.player.pause()
-                                    : widget.playerService.player.play();
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.skip_next,
-                                size: 30,
-                                color: Color.fromARGB(255, 236, 156, 226),
-                              ),
-                              onPressed: _playNext,
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                widget.playerService.repeatMode ==
-                                        RepeatMode.one
-                                    ? Icons.repeat_one
-                                    : Icons.repeat,
-                                color: const Color.fromARGB(255, 236, 156, 226),
-                                size: 25,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  widget.playerService.repeatMode =
-                                      widget.playerService.repeatMode ==
-                                          RepeatMode.none
-                                      ? RepeatMode.one
-                                      : RepeatMode.none;
-                                  if (widget.playerService.repeatMode ==
-                                          RepeatMode.none &&
-                                      _showLyrics) {
-                                    _fetchLyrics();
-                                  }
-                                  widget.playerService.player.setLoopMode(
-                                    widget.playerService.repeatMode ==
-                                            RepeatMode.one
-                                        ? LoopMode.one
-                                        : LoopMode.off,
-                                  );
-                                });
-                              },
-                            ),
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.playlist_add_outlined,
-                                size: 30,
-                                color: Color.fromARGB(255, 236, 156, 226),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
 

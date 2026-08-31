@@ -189,6 +189,7 @@ class AlbumDisplay extends StatelessWidget {
   final List<dynamic> tags;
 
   const AlbumDisplay({
+    super.key,
     required this.title,
     required this.artistName,
     required this.coverUrl,

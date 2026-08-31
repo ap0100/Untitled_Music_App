@@ -69,6 +69,7 @@ abstract class DisplayClipper extends CustomClipper<Path> {
 
   Path buildClipPath(Size size);
 
+  @override
   Path getClip(Size size) => buildClipPath(size);
 
   @override
@@ -273,6 +274,83 @@ class filterSectionClipper extends CustomClipper<Path> {
     path.lineTo(17, h - 5 - offset);
     path.lineTo(15 - offset, h - 4 - offset);
     path.lineTo(0, h - 10 - offset);
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => true;
+}
+
+class mainPlayerScreen extends CustomClipper<Path> {
+  final bool offset;
+  final int part;
+
+  mainPlayerScreen({this.offset = false, this.part = 0});
+
+  @override
+  Path getClip(Size size) {
+    final w = size.width;
+    final h = size.height;
+    final path = Path();
+
+    switch (part) {
+      case 0:
+        if (offset) {
+          path.lineTo(10, 45);
+          path.lineTo(60, 20);
+          path.lineTo(w - 75, 0);
+          path.lineTo(w - 35, 30);
+          path.lineTo(w - 15, 90);
+          path.lineTo(w - 30, h - 22);
+          path.lineTo(w - 30, h - 20);
+          path.lineTo(w - 45, h - 5);
+          path.lineTo(90, h - 6);
+          path.lineTo(35, h - 25);
+          path.lineTo(25, h - 35);
+          path.lineTo(10, 45);
+          break;
+        }
+        path.lineTo(17, 60);
+        path.lineTo(60, 22);
+        path.lineTo(w - 90, 8);
+        path.lineTo(w - 45, 30);
+        path.lineTo(w - 20, 90);
+        path.lineTo(w - 30, h - 25);
+        path.lineTo(w - 40, h - 10);
+        path.lineTo(w - 50, h - 6);
+        path.lineTo(80, h - 10);
+        path.lineTo(45, h - 30);
+        path.lineTo(25, h - 45);
+        path.lineTo(17, 60);
+        break;
+
+      case 1:
+        if (offset) {
+          path.lineTo(10, 50);
+          path.lineTo(20, 35);
+          path.lineTo(w - 65, 12);
+          path.lineTo(w - 5, 50);
+          path.lineTo(w, h - 70);
+          path.lineTo(w - 25, h - 25);
+          path.lineTo(w - 50, h - 12);
+          path.lineTo(40, h - 8);
+          path.lineTo(20, h - 35);
+          path.lineTo(10, 50);
+          break;
+        }
+        path.lineTo(20, 50);
+        path.lineTo(30, 35);
+        path.lineTo(w - 65, 15);
+        path.lineTo(w - 5, 40);
+        path.lineTo(w, h - 70);
+        path.lineTo(w - 10, h - 25);
+        path.lineTo(w - 45, h - 5);
+        path.lineTo(35, h - 10);
+        path.lineTo(15, h - 35);
+        path.lineTo(20, 50);
+        break;
+    }
 
     return path;
   }
