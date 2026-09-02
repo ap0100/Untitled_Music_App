@@ -1,11 +1,8 @@
-/opt/android-studio/bin/studio - Launching Android Studio
-Bus 003 Device 005: ID 18d1:4ee7 Google Inc. Nexus/Pixel Device (charging + debug) - phone vendor id
-
 On phone: in settings click ,,OS version" 7 times to get prompt "You are a developer now!", then in Additional Settings click ,,Developer options" and enable ,,USB debugging" and ,,Install via USB"
 
 
-Flutter attempt (working so far):
-------------------
+Flutter attempt:
+----------------
 flutter clean 
 flutter pub get
 flutter run

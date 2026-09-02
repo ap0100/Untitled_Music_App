@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/screens/album_view.dart';
-import '../theme/jinx_style.dart';
+import '../theme/cyberpunk_vibrant.dart';
 import '../services/player.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '../screens/artist_profile.dart';
@@ -60,7 +60,7 @@ class ArtistDisplay extends StatelessWidget {
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.92,
                   height: MediaQuery.of(context).size.height * 0.062,
-                  color: JinxTheme.yellowish,
+                  color: CyberpunkTheme.yellowish,
                 ),
               ),
             ),
@@ -70,7 +70,7 @@ class ArtistDisplay extends StatelessWidget {
                 offset: Offset(0, 2),
                 child: Container(
                   height: 55,
-                  color: JinxTheme.yellowish,
+                  color: CyberpunkTheme.yellowish,
                   margin: EdgeInsets.only(bottom: 5),
                 ),
               ),
@@ -87,8 +87,8 @@ class ArtistDisplay extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      JinxTheme.dark.withValues(alpha: 0.815),
-                      JinxTheme.midnightExpress.withValues(alpha: 0.85),
+                      CyberpunkTheme.dark.withValues(alpha: 0.815),
+                      CyberpunkTheme.midnightExpress.withValues(alpha: 0.85),
                     ],
                     stops: [0, 1.5],
                   ),
@@ -106,7 +106,7 @@ class ArtistDisplay extends StatelessWidget {
                           child: Container(
                             height: 55,
                             width: 70,
-                            color: JinxTheme.yellowish,
+                            color: CyberpunkTheme.yellowish,
                           ),
                         ),
                         ClipPath(
@@ -136,7 +136,7 @@ class ArtistDisplay extends StatelessWidget {
                           Text(
                             name ?? 'Unknown Artist',
                             style: const TextStyle(
-                              color: JinxTheme.mainFontColor,
+                              color: CyberpunkTheme.mainFontColor,
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
@@ -147,7 +147,7 @@ class ArtistDisplay extends StatelessWidget {
                           Text(
                             'Artist',
                             style: const TextStyle(
-                              color: JinxTheme.yellowish,
+                              color: CyberpunkTheme.yellowish,
                               fontSize: 11,
                             ),
                             maxLines: 1,
@@ -162,7 +162,7 @@ class ArtistDisplay extends StatelessWidget {
                         Icons.arrow_forward_ios_rounded,
                         size: 15,
                       ),
-                      color: JinxTheme.yellowish,
+                      color: CyberpunkTheme.yellowish,
                       onPressed: () {
                         _navigateToArtistProfile(context);
                       },
@@ -235,7 +235,7 @@ class AlbumDisplay extends StatelessWidget {
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.92,
                   height: MediaQuery.of(context).size.height * 0.062,
-                  color: JinxTheme.turquoiseGreen,
+                  color: CyberpunkTheme.turquoiseGreen,
                 ),
               ),
             ),
@@ -245,7 +245,7 @@ class AlbumDisplay extends StatelessWidget {
                 offset: Offset(0, 2),
                 child: Container(
                   height: 55,
-                  color: JinxTheme.turquoiseGreen,
+                  color: CyberpunkTheme.turquoiseGreen,
                   margin: EdgeInsets.only(bottom: 5),
                 ),
               ),
@@ -261,10 +261,10 @@ class AlbumDisplay extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      JinxTheme.midnightExpressOpposite.withValues(
+                      CyberpunkTheme.midnightExpressOpposite.withValues(
                         alpha: 0.815,
                       ),
-                      JinxTheme.midnightExpress.withValues(alpha: 0.85),
+                      CyberpunkTheme.midnightExpress.withValues(alpha: 0.85),
                     ],
                     stops: [0.2, 1.5],
                   ),
@@ -284,7 +284,7 @@ class AlbumDisplay extends StatelessWidget {
                             child: Container(
                               height: 55,
                               width: 70,
-                              color: JinxTheme.turquoiseGreen,
+                              color: CyberpunkTheme.turquoiseGreen,
                             ),
                           ),
                         ),
@@ -315,7 +315,7 @@ class AlbumDisplay extends StatelessWidget {
                           Text(
                             title ?? 'Unknown Album',
                             style: const TextStyle(
-                              color: JinxTheme.mainFontColor,
+                              color: CyberpunkTheme.mainFontColor,
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
@@ -326,7 +326,7 @@ class AlbumDisplay extends StatelessWidget {
                           Text(
                             'Album',
                             style: const TextStyle(
-                              color: JinxTheme.turquoiseGreen,
+                              color: CyberpunkTheme.turquoiseGreen,
                               fontSize: 11,
                             ),
                             maxLines: 1,
@@ -341,7 +341,7 @@ class AlbumDisplay extends StatelessWidget {
                         Icons.arrow_forward_ios_rounded,
                         size: 15,
                       ),
-                      color: JinxTheme.turquoiseGreen,
+                      color: CyberpunkTheme.turquoiseGreen,
                       onPressed: () {
                         _navigateToAlbumProfile(context);
                       },
@@ -410,8 +410,8 @@ class TrackDisplay extends StatelessWidget {
                 child: Container(
                   height: 51,
                   color: isPlaying
-                      ? JinxTheme.violetBlue.withValues(alpha: 0.75)
-                      : JinxTheme.brightTurquoise.withValues(
+                      ? CyberpunkTheme.violetBlue.withValues(alpha: 0.75)
+                      : CyberpunkTheme.brightTurquoise.withValues(
                           alpha: 0.7,
                         ) /* isPlaying
                     ? Color.fromARGB(255, 159, 135, 161)
@@ -427,8 +427,8 @@ class TrackDisplay extends StatelessWidget {
                   width: MediaQuery.of(context).size.width * 0.927,
                   height: MediaQuery.of(context).size.height * 0.062,
                   color: isPlaying
-                      ? JinxTheme.shimmerPink.withValues(alpha: 0.9)
-                      : JinxTheme.brightTurquoise.withValues(alpha: 0.75),
+                      ? CyberpunkTheme.shimmerPink.withValues(alpha: 0.9)
+                      : CyberpunkTheme.brightTurquoise.withValues(alpha: 0.75),
                 ),
               ),
             ),
@@ -444,10 +444,12 @@ class TrackDisplay extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: !isPlaying
                         ? [
-                            JinxTheme.midnightExpressOpposite.withValues(
+                            CyberpunkTheme.midnightExpressOpposite.withValues(
                               alpha: 0.85,
                             ),
-                            JinxTheme.midnightExpress.withValues(alpha: 0.8),
+                            CyberpunkTheme.midnightExpress.withValues(
+                              alpha: 0.8,
+                            ),
                             //darkened!.withValues(alpha: 0.5), //0.35),
                             //Colors.transparent,
                           ]
@@ -455,7 +457,7 @@ class TrackDisplay extends StatelessWidget {
                             const Color.fromARGB(146, 5, 216, 219).withValues(
                               alpha: 0.6,
                             ), //const Color.fromARGB(118, 250, 162, 253),
-                            JinxTheme.brightTurquoise.withValues(
+                            CyberpunkTheme.brightTurquoise.withValues(
                               alpha: 0.35,
                             ), //const Color.fromARGB(134, 162, 253, 248),
                           ],
@@ -478,10 +480,10 @@ class TrackDisplay extends StatelessWidget {
                               width: 90,
                               height: 65,
                               color: isPlaying
-                                  ? JinxTheme.shimmerPink.withValues(
+                                  ? CyberpunkTheme.shimmerPink.withValues(
                                       alpha: 0.78,
                                     )
-                                  : JinxTheme.brightTurquoise.withValues(
+                                  : CyberpunkTheme.brightTurquoise.withValues(
                                       alpha: 0.7,
                                     ),
                             ),
@@ -514,10 +516,10 @@ class TrackDisplay extends StatelessWidget {
                             title,
                             style: TextStyle(
                               color: isPlaying
-                                  ? JinxTheme.tyrianPurple.withValues(
+                                  ? CyberpunkTheme.tyrianPurple.withValues(
                                       alpha: 0.8,
                                     )
-                                  : JinxTheme.mainFontColor,
+                                  : CyberpunkTheme.mainFontColor,
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
@@ -535,7 +537,7 @@ class TrackDisplay extends StatelessWidget {
                                       30,
                                       116,
                                     ).withValues(alpha: 0.95)
-                                  : JinxTheme.brightTurquoise.withValues(
+                                  : CyberpunkTheme.brightTurquoise.withValues(
                                       alpha: 1,
                                     ),
                               fontSize: 11,
@@ -554,8 +556,8 @@ class TrackDisplay extends StatelessWidget {
                       icon: Icon(
                         Icons.menu_sharp,
                         color: isPlaying
-                            ? JinxTheme.tyrianPurple.withValues(alpha: 0.6)
-                            : JinxTheme.shimmerPink.withValues(alpha: 0.7),
+                            ? CyberpunkTheme.tyrianPurple.withValues(alpha: 0.6)
+                            : CyberpunkTheme.shimmerPink.withValues(alpha: 0.7),
                       ),
                       iconSize: 20,
                       onPressed: () {},

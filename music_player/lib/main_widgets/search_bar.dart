@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/jinx_style.dart';
+import '../theme/cyberpunk_vibrant.dart';
 
 class SearchBarWidget extends StatefulWidget {
   final TextEditingController controller;
@@ -42,13 +42,13 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
       children: [
         Container(
           color: _focusNode.hasFocus
-              ? JinxTheme.tyrianPurple.withValues(alpha: 0.95)
-              : JinxTheme.brightTurquoise.withValues(alpha: 0.7),
+              ? CyberpunkTheme.tyrianPurple.withValues(alpha: 0.95)
+              : CyberpunkTheme.brightTurquoise.withValues(alpha: 0.7),
           height: 156,
         ),
         Container(
           width: double.infinity,
-          color: JinxTheme.dark.withValues(alpha: 0.95),
+          color: CyberpunkTheme.dark.withValues(alpha: 0.95),
           padding: const EdgeInsets.only(
             left: 8,
             right: 8,
@@ -64,14 +64,14 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: JinxTheme.mainFontColor.withValues(alpha: 0.8),
+                  color: CyberpunkTheme.mainFontColor.withValues(alpha: 0.8),
                 ),
               ),
               Text(
                 'no ads, no premium, just music --- developed by ap0100',
                 style: TextStyle(
                   fontSize: 13,
-                  color: JinxTheme.mainFontColor.withValues(alpha: 0.7),
+                  color: CyberpunkTheme.mainFontColor.withValues(alpha: 0.7),
                   fontWeight: FontWeight.w300,
                 ),
               ),
@@ -81,11 +81,11 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                 child: TextField(
                   focusNode: _focusNode,
                   controller: widget.controller,
-                  cursorColor: JinxTheme.turquoiseGreen,
+                  cursorColor: CyberpunkTheme.turquoiseGreen,
                   onSubmitted: widget.onSubmitted,
                   textAlign: TextAlign.left,
                   style: const TextStyle(
-                    color: JinxTheme.mainFontColor,
+                    color: CyberpunkTheme.mainFontColor,
                     fontSize: 15,
                   ),
                   decoration: InputDecoration(
@@ -93,31 +93,35 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                     counterText: '',
                     hintText: 'Search song, artist...',
                     hintStyle: TextStyle(
-                      color: JinxTheme.tyrianPurple.withValues(alpha: 0.8),
+                      color: CyberpunkTheme.tyrianPurple.withValues(alpha: 0.8),
                       fontSize: 15,
                     ),
                     prefixIcon: GestureDetector(
                       onTap: () => widget.onSearch(widget.controller.text),
                       child: const Icon(
                         Icons.search_sharp,
-                        color: JinxTheme.deepCerise,
+                        color: CyberpunkTheme.deepCerise,
                         size: 25,
                       ),
                     ),
                     filled: true,
-                    fillColor: JinxTheme.darkCold.withValues(
+                    fillColor: CyberpunkTheme.darkCold.withValues(
                       alpha: 0.1,
                     ), // const Color.fromARGB(255, 44, 28, 46),
                     contentPadding: const EdgeInsets.symmetric(vertical: 12),
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
-                        color: JinxTheme.brightTurquoise.withValues(alpha: 0.8),
+                        color: CyberpunkTheme.brightTurquoise.withValues(
+                          alpha: 0.8,
+                        ),
                         width: 1.2,
                       ),
                     ),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
-                        color: JinxTheme.shimmerPink.withValues(alpha: 0.8),
+                        color: CyberpunkTheme.shimmerPink.withValues(
+                          alpha: 0.8,
+                        ),
                         width: 1.0,
                       ),
                     ),

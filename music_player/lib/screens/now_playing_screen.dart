@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart' hide RepeatMode;
-import 'package:music_player/theme/jinx_style.dart';
+import 'package:music_player/theme/cyberpunk_vibrant.dart';
 import '../services/player.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '../utils/youtube_cleaner.dart';
@@ -205,9 +205,9 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                         colors: [
-                          JinxTheme.shimmerPink.withValues(alpha: 0.85),
+                          CyberpunkTheme.shimmerPink.withValues(alpha: 0.85),
 
-                          JinxTheme.brightTurquoise.withValues(alpha: 0.8),
+                          CyberpunkTheme.brightTurquoise.withValues(alpha: 0.8),
                         ],
                       ),
                     ),
@@ -231,7 +231,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
                                   colors: [
-                                    JinxTheme.mainFontColor.withValues(
+                                    CyberpunkTheme.mainFontColor.withValues(
                                       alpha: 0.9,
                                     ), //Color.fromARGB(255, 27, 17, 26),
                                     Colors.transparent.withValues(alpha: 0.8),
@@ -307,9 +307,9 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                                           decoration: BoxDecoration(
                                             gradient: LinearGradient(
                                               colors: [
-                                                JinxTheme.brightTurquoise
+                                                CyberpunkTheme.brightTurquoise
                                                     .withValues(alpha: 0.65),
-                                                JinxTheme.shimmerPink
+                                                CyberpunkTheme.shimmerPink
                                                     .withValues(alpha: 0.65),
                                               ],
                                               stops: [0, 0.65],

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../theme/jinx_style.dart';
+import '../theme/cyberpunk_vibrant.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 
 class MiniPlayer extends StatelessWidget {
@@ -28,11 +28,11 @@ class MiniPlayer extends StatelessWidget {
     if (video == null) return SizedBox.shrink();
 
     var borderColor = searchFocused
-        ? JinxTheme.deepCerise
+        ? CyberpunkTheme.deepCerise
         : artistProfileFocused
-        ? JinxTheme
+        ? CyberpunkTheme
               .tyrianPurple //Color.fromARGB(255, 124, 78, 120)
-        : JinxTheme.brightTurquoise;
+        : CyberpunkTheme.brightTurquoise;
 
     return GestureDetector(
       onTap: onTap,
@@ -52,15 +52,15 @@ class MiniPlayer extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.only(right: 1.5),
                 height: 85,
-                color: JinxTheme.dark.withValues(alpha: 0.95),
+                color: CyberpunkTheme.dark.withValues(alpha: 0.95),
                 /*decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
                       //Color.fromARGB(255, 15, 20, 20),
-                      (JinxTheme.darkWarm).withValues(alpha: 0.95),
-                      (JinxTheme.darkCold).withValues(
+                      (CyberpunkTheme.darkWarm).withValues(alpha: 0.95),
+                      (CyberpunkTheme.darkCold).withValues(
                         alpha: 0.9,
                       ), //Color.fromARGB(255, 34, 28, 46),
                     ],
@@ -108,7 +108,7 @@ class MiniPlayer extends StatelessWidget {
                             child: Text(
                               video!.title,
                               style: TextStyle(
-                                color: JinxTheme.shimmerPink.withValues(
+                                color: CyberpunkTheme.shimmerPink.withValues(
                                   alpha: 1,
                                 ), // const Color.fromARGB(255, 205, 248, 241),
                                 fontSize: 13,
@@ -130,23 +130,24 @@ class MiniPlayer extends StatelessWidget {
                                   return SizedBox(
                                     width: 320,
                                     child: ProgressBar(
-                                      thumbGlowColor: JinxTheme.turquoiseGreen
+                                      thumbGlowColor: CyberpunkTheme
+                                          .turquoiseGreen
                                           .withValues(alpha: 0.5),
                                       barHeight: 1.5,
                                       progress: position,
                                       total: duration,
                                       onSeek: (pos) => player.seek(pos),
-                                      progressBarColor: JinxTheme
+                                      progressBarColor: CyberpunkTheme
                                           .brightTurquoise
                                           .withValues(alpha: 1),
-                                      baseBarColor: JinxTheme.tyrianPurple
+                                      baseBarColor: CyberpunkTheme.tyrianPurple
                                           .withValues(alpha: 1),
-                                      thumbColor: JinxTheme.brightTurquoise
+                                      thumbColor: CyberpunkTheme.brightTurquoise
                                           .withValues(alpha: 1),
                                       timeLabelLocation:
                                           TimeLabelLocation.sides,
                                       timeLabelTextStyle: const TextStyle(
-                                        color: JinxTheme.mainFontColor,
+                                        color: CyberpunkTheme.mainFontColor,
                                         fontSize: 10,
                                       ),
                                       thumbRadius: 3,
@@ -188,7 +189,7 @@ class MiniPlayer extends StatelessWidget {
                       onPressed: onTap,
                       icon: Icon(
                         Icons.arrow_upward,
-                        color: JinxTheme
+                        color: CyberpunkTheme
                             .violetBlue, //Color.fromARGB(255, 227, 156, 236),
                       ),
                     ),

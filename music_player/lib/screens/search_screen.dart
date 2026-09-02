@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/theme/jinx_style.dart';
+import 'package:music_player/theme/cyberpunk_vibrant.dart';
 import '../main_widgets/mini_player.dart';
 import '../services/player.dart';
 import '../services/search.dart';
@@ -250,12 +250,12 @@ class _SearchScreenState extends State<SearchScreen> {
                 gradient: RadialGradient(
                   colors: isActive
                       ? [
-                          JinxTheme.tyrianPurple.withValues(alpha: 0.4),
-                          JinxTheme.shimmerPink.withValues(alpha: 0.8),
+                          CyberpunkTheme.tyrianPurple.withValues(alpha: 0.4),
+                          CyberpunkTheme.shimmerPink.withValues(alpha: 0.8),
                         ]
                       : [
-                          JinxTheme.darkWarm.withValues(alpha: 0.6),
-                          JinxTheme.tyrianPurple.withValues(alpha: 0.8),
+                          CyberpunkTheme.darkWarm.withValues(alpha: 0.6),
+                          CyberpunkTheme.tyrianPurple.withValues(alpha: 0.8),
                         ],
                 ),
               ),
@@ -270,7 +270,7 @@ class _SearchScreenState extends State<SearchScreen> {
               decoration: BoxDecoration(
                 color: isActive
                     ? color
-                    : JinxTheme.regalBlue.withValues(alpha: 0.56),
+                    : CyberpunkTheme.regalBlue.withValues(alpha: 0.56),
                 borderRadius: BorderRadius.circular(2.5),
                 border: const Border(
                   bottom: BorderSide(
@@ -290,17 +290,17 @@ class _SearchScreenState extends State<SearchScreen> {
                             height: 14,
                             child: CircularProgressIndicator(
                               strokeWidth: 1.5,
-                              color: JinxTheme.tyrianPurple,
+                              color: CyberpunkTheme.tyrianPurple,
                             ),
                           )
                         : Text(
                             label,
                             style: TextStyle(
                               color: isActive
-                                  ? JinxTheme.tyrianPurple.withValues(
+                                  ? CyberpunkTheme.tyrianPurple.withValues(
                                       alpha: 0.75,
                                     )
-                                  : JinxTheme.shimmerPink.withValues(
+                                  : CyberpunkTheme.shimmerPink.withValues(
                                       alpha: 0.8,
                                     ),
                               fontSize: 13,
@@ -336,8 +336,8 @@ class _SearchScreenState extends State<SearchScreen> {
             begin: const Alignment(0.0, 0.0),
             end: const Alignment(0.0, 1.6),
             colors: const [
-              JinxTheme.dark, //Color.fromARGB(255, 23, 19, 31),
-              JinxTheme.darkCold, // Color.fromARGB(255, 103, 89, 136),
+              CyberpunkTheme.dark, //Color.fromARGB(255, 23, 19, 31),
+              CyberpunkTheme.darkCold, // Color.fromARGB(255, 103, 89, 136),
             ],
           ),
         ),
@@ -357,13 +357,15 @@ class _SearchScreenState extends State<SearchScreen> {
                   children: [
                     Container(
                       color: _isSearchFocused
-                          ? JinxTheme.tyrianPurple.withValues(alpha: 0.95)
-                          : JinxTheme.brightTurquoise.withValues(alpha: 0.7),
+                          ? CyberpunkTheme.tyrianPurple.withValues(alpha: 0.95)
+                          : CyberpunkTheme.brightTurquoise.withValues(
+                              alpha: 0.7,
+                            ),
                       height: 50,
                     ),
                     Container(
                       padding: EdgeInsets.only(left: 8),
-                      color: JinxTheme.dark.withValues(alpha: 0.95),
+                      color: CyberpunkTheme.dark.withValues(alpha: 0.95),
                       height: 50,
                       child: Align(
                         alignment: Alignment.bottomLeft,
@@ -374,7 +376,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               isActive: _showArtists,
                               isLoading: artistsLoading,
                               onTap: _toggleArtists,
-                              color: JinxTheme.yellowish,
+                              color: CyberpunkTheme.yellowish,
                               type: 'artists_btn',
                             ),
                             SizedBox(width: 10),
@@ -384,7 +386,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               isLoading: albumsLoading,
                               onTap: _toggleAlbums,
                               w: 68,
-                              color: JinxTheme.turquoiseGreen,
+                              color: CyberpunkTheme.turquoiseGreen,
                               type: 'albums_btn',
                             ),
                             SizedBox(width: 10),
@@ -426,19 +428,20 @@ class _SearchScreenState extends State<SearchScreen> {
                                 child: Container(
                                   height: 30,
                                   color: _isSearchFocused
-                                      ? JinxTheme.tyrianPurple.withValues(
+                                      ? CyberpunkTheme.tyrianPurple.withValues(
                                           alpha: 0.95,
                                         )
-                                      : JinxTheme.brightTurquoise.withValues(
-                                          alpha: 0.7,
-                                        ),
+                                      : CyberpunkTheme.brightTurquoise
+                                            .withValues(alpha: 0.7),
                                 ),
                               ),
                               ClipPath(
                                 clipper: filterSectionClipper(offset: 3),
                                 child: Container(
                                   height: 30,
-                                  color: JinxTheme.dark.withValues(alpha: 0.95),
+                                  color: CyberpunkTheme.dark.withValues(
+                                    alpha: 0.95,
+                                  ),
                                 ),
                               ),
                             ],

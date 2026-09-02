@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class JinxTheme {
+class CyberpunkTheme {
   static const Color deepCerise = Color.fromARGB(169, 253, 62, 253);
   static const Color brightTurquoise = Color.fromARGB(148, 34, 239, 242);
   static const Color tyrianPurple = Color.fromARGB(255, 116, 6, 97);
