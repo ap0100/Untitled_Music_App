@@ -1,0 +1,38 @@
+On phone: in settings click ,,OS version" 7 times to get prompt "You are a developer now!", then in Additional Settings click ,,Developer options" and enable ,,USB debugging" and ,,Install via USB"
+
+
+Flutter attempt:
+----------------
+flutter clean 
+flutter pub get
+flutter run
+flutter run -d android
+flutter build apk --release && adb install -r build/app/outputs/flutter-apk/app-release.apk
+flutter build apk --debug && adb install -r build/app/outputs/flutter-apk/app-debug.apk
+
+flutter run -d android 2>&1 | grep "===MYLOG==="
+flutter run | grep "===MYLOG==="
+
+flutter clean & flutter pub get & flutter run | grep "===MYLOG==="
+
+(base) ap@ap-Nitro-AN515-57:~/Desktop/My Files/My Codes/music_app/music_player$
+
+
+
+
+React Native attempt (ABSOLUTE FAIL):
+-------------------------------------
+sudo adb kill-server
+sudo adb start-server
+sudo adb devices
+ 
+npm run android
+npx react-native run-android
+
+cd android && ./gradlew clean && cd .. - clean Android build
+
+Re-bundle & Reinstall when changing App.tsx because we're bypassing Metro:
+npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res
+cd android && ./gradlew assembleDebug && cd ..
+adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+
