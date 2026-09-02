@@ -205,9 +205,11 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                         colors: [
-                          CyberpunkTheme.shimmerPink.withValues(alpha: 0.85),
+                          CyberpunkTheme.shimmerPink.withValues(alpha: 0.8),
 
-                          CyberpunkTheme.brightTurquoise.withValues(alpha: 0.8),
+                          CyberpunkTheme.brightTurquoise.withValues(
+                            alpha: 0.75,
+                          ),
                         ],
                       ),
                     ),
@@ -245,7 +247,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                                 scaleX: 1.2,
                                 //offset: const Offset(0, -50),
                                 child: Opacity(
-                                  opacity: 0.65,
+                                  opacity: 0.57,
                                   child: CachedNetworkImage(
                                     imageUrl:
                                         currentVideo?.thumbnails.highResUrl ??
@@ -311,6 +313,29 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                                                     .withValues(alpha: 0.65),
                                                 CyberpunkTheme.shimmerPink
                                                     .withValues(alpha: 0.65),
+                                              ],
+                                              stops: [0, 0.65],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      ClipPath(
+                                        clipper: mainPlayerScreen(
+                                          part: 1,
+                                          shift: 1.5,
+                                        ),
+                                        child: Container(
+                                          height: 171,
+                                          width: 175,
+                                          //color: CyberpunkTheme.turquoiseGreen
+                                          //.withValues(alpha: 1),
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                CyberpunkTheme.brightTurquoise
+                                                    .withValues(alpha: 0.8),
+                                                CyberpunkTheme.shimmerPink
+                                                    .withValues(alpha: 0.8),
                                               ],
                                               stops: [0, 0.65],
                                             ),

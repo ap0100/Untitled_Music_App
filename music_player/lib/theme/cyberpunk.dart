@@ -285,8 +285,9 @@ class filterSectionClipper extends CustomClipper<Path> {
 class mainPlayerScreen extends CustomClipper<Path> {
   final bool offset;
   final int part;
+  final double shift;
 
-  mainPlayerScreen({this.offset = false, this.part = 0});
+  mainPlayerScreen({this.offset = false, this.part = 0, this.shift = 0});
 
   @override
   Path getClip(Size size) {
@@ -339,16 +340,16 @@ class mainPlayerScreen extends CustomClipper<Path> {
           path.lineTo(10, 50);
           break;
         }
-        path.lineTo(20, 50);
-        path.lineTo(30, 35);
-        path.lineTo(w - 65, 15);
-        path.lineTo(w - 5, 40);
-        path.lineTo(w, h - 70);
-        path.lineTo(w - 10, h - 25);
-        path.lineTo(w - 45, h - 5);
-        path.lineTo(35, h - 10);
-        path.lineTo(15, h - 35);
-        path.lineTo(20, 50);
+        path.lineTo(20 - shift, 50 - shift + (shift > 0 ? -1 : 1.5));
+        path.lineTo(30 - shift, 35 - shift + (shift > 0 ? 2 : 1.5));
+        path.lineTo(w - 65, 15 - shift + (shift > 0 ? 1 : 0.8));
+        path.lineTo(w - 5, 40 - shift);
+        path.lineTo(w - 2 + shift, h - 70);
+        path.lineTo(w - 10 + shift, h - 25);
+        path.lineTo(w - 45 + shift, h - 5 + (shift > 0 ? -0.5 : -1));
+        path.lineTo(35 - shift, h - 10 - shift + (shift > 0 ? 1 : 0));
+        path.lineTo(15 - shift, h - 35 - shift);
+        path.lineTo(20 - shift, 50 - shift + (shift > 0 ? -1 : 1.5));
         break;
     }
 
