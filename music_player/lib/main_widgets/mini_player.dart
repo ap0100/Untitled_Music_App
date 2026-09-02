@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../theme/cyberpunk_vibrant.dart';
+import '../theme/cyberpunk.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 
 class MiniPlayer extends StatelessWidget {

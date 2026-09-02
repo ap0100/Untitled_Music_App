@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/screens/album_view.dart';
-import '../theme/cyberpunk_vibrant.dart';
+import '../theme/cyberpunk.dart';
 import '../services/player.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '../screens/artist_profile.dart';

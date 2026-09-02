@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/cyberpunk_vibrant.dart';
+import '../theme/cyberpunk.dart';
 
 class SearchBarWidget extends StatefulWidget {
   final TextEditingController controller;

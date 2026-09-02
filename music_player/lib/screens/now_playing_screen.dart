@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart' hide RepeatMode;
-import 'package:music_player/theme/cyberpunk_vibrant.dart';
+import 'package:music_player/theme/cyberpunk.dart';
 import '../services/player.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '../utils/youtube_cleaner.dart';

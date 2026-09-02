@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:music_player/theme/cyberpunk_vibrant.dart';
+import 'package:music_player/theme/cyberpunk.dart';
 import '../main_widgets/mini_player.dart';
 import '../services/player.dart';
 import '../services/search.dart';
