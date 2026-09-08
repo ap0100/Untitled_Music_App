@@ -12,6 +12,7 @@ primarily finished:
 
 work in progress:
 - custom UI design
+- additional smaller features
 
 ### APIs used:
 - <a href="https://musicbrainz.org/ws/2">MusicBrainz</a>
