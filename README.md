@@ -108,5 +108,5 @@ A cross-platform music player built with **Flutter**, designed to give users a c
 ## 📬 Progress Updates
 
 I post detailed development updates on my Reddit account.  
-👉 **[Follow along on Reddit](https://www.reddit.com/user/ap0100)**
+👉 **[Follow along on Reddit](https://www.reddit.com/user/kigam4/)**
 
