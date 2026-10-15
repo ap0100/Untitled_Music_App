@@ -1,7 +1,7 @@
 <div align="center">
 
 # 🎧 Music App
-### *No ads. No premium. Just music.*
+### *No ads. Just music.*
 
 <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" />
 <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white" />
@@ -19,12 +19,13 @@
 
 ## 📖 About
 
-A cross-platform music player built with **Flutter**, designed to give users a clean, ad-free listening experience with rich metadata about the music they love. No subscriptions, no interruptions — just music and the information behind it.
+A cross-platform music app built with **Flutter**, designed to give users a clean, ad-free listening experience with rich metadata about the music they love. 
+Just music and the information behind it.
 
 
 ## ✨ Features
 
-### ✅ Part 1 — Primarily Finished
+### ⏳☑️ Part 1 — Primarily Finished (90% done)
 
 <table>
 <tr>
@@ -47,10 +48,10 @@ A cross-platform music player built with **Flutter**, designed to give users a c
 <td valign="top" width="50%">
 
 **Metadata & Extras**
-- 📝 Lyrics (synced & plain)
+- 📝 Lyrics (synced and/or plain)
 - 🖼️ Cover art from multiple sources
 - 🏷️ Genre tags & artist info
-- 🎨 Custom UI design (in progress)
+- 🎨 Custom UI design
 
 </td>
 </tr>
@@ -59,8 +60,7 @@ A cross-platform music player built with **Flutter**, designed to give users a c
 ### 🚧 Work in Progress
 
 - [ ] Custom UI/UX design (ongoing, Cyberpunk-inspired aesthetic)
-- [ ] Additional smaller features
-- [ ] Polish & refinements
+- [ ] Additional smaller features (like switching between synced and plain lyrics...)
 
 ### 🔮 Part 2 — Planned
 
@@ -68,7 +68,7 @@ A cross-platform music player built with **Flutter**, designed to give users a c
 - [ ] Recommendations engine
 - [ ] Personal library (personal YouTube playlists pulled and connected)
 - [ ] Listening history
-- [ ] Yearly recap / stats
+- [ ] Monthly/Yearly recap and stats
 
 
 ## 🔌 APIs Used
@@ -107,6 +107,6 @@ A cross-platform music player built with **Flutter**, designed to give users a c
 
 ## 📬 Progress Updates
 
-I post detailed development updates on my Reddit account.  
-👉 **[Follow along on Reddit](https://www.reddit.com/user/kigam4/)**
+I post detailed development updates on my Reddit account:  
+👉 **[Follow along](https://www.reddit.com/user/kigam4/)**
 
